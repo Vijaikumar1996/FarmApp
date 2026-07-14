@@ -43,11 +43,12 @@ export default function SelectField({
               placeholder={placeholder}
               isClearable={!required}
               isDisabled={disabled}
-              className={`p-1 rounded ${
-                fieldState.error ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`p-1 rounded ${fieldState.error ? "border-red-500" : "border-gray-300"
+                }`}
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
               styles={{
-                menu: (base) => ({
+                menuPortal: (base) => ({
                   ...base,
                   zIndex: 9999,
                 }),

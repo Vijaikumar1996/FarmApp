@@ -39,6 +39,8 @@ export default function DriverLoadingTab() {
     isLoading
   } = useDriverLoading(searchDate);
 
+  console.log("Driver Loading Data:", data);
+
   const handleCopy = async () => {
 
     if (!data.length) {
@@ -141,24 +143,23 @@ export default function DriverLoadingTab() {
 
       {!isLoading &&
 
-        data.map(area => (
 
-          <div
-            key={area.areaId}
-            className="rounded-xl border border-gray-200 bg-white overflow-hidden"
-          >
 
-       
+        <div
+          className="rounded-xl border border-gray-200 bg-white overflow-hidden"
+        >
 
-            {/* Products */}
 
-            <div className="grid grid-cols-1 p-3 lg:grid-cols-2 xl:grid-cols-3 gap-5">
 
-              {data.map(area => (
+          {/* Products */}
 
-                <div
-                  key={area.areaId}
-                  className="
+          <div className="grid grid-cols-1 p-3 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+
+            {data.map(area => (
+
+              <div
+                key={area.areaId}
+                className="
                 bg-white
                 rounded-2xl
                 border
@@ -166,35 +167,35 @@ export default function DriverLoadingTab() {
                 shadow-sm
                 overflow-hidden
             "
-                >
+              >
 
-                  {/* Header */}
+                {/* Header */}
 
-                  <div className="bg-blue-50 px-4 py-3 border-b">
+                <div className="bg-blue-50 px-4 py-3 border-b">
 
-                    <h3 className="font-semibold text-blue-700">
-                      📍 {area.areaName}
-                    </h3>
+                  <h3 className="font-semibold text-blue-700">
+                    📍 {area.areaName}
+                  </h3>
 
-                  </div>
+                </div>
 
-                  {/* Products */}
+                {/* Products */}
 
-                  <div className="p-4 space-y-3">
+                <div className="p-4 space-y-3">
 
-                    {area.products.map(product => (
+                  {area.products.map(product => (
 
-                      <div
-                        key={product.productId}
-                        className="flex justify-between items-center"
-                      >
+                    <div
+                      key={product.productId}
+                      className="flex justify-between items-center"
+                    >
 
-                        <span className="font-medium">
-                          {product.productCode}
-                        </span>
+                      <span className="font-medium">
+                        {product.productCode}
+                      </span>
 
-                        <span
-                          className="
+                      <span
+                        className="
                                 bg-blue-100
                                 text-blue-700
                                 px-3
@@ -204,25 +205,25 @@ export default function DriverLoadingTab() {
                                 min-w-[45px]
                                 text-center
                             "
-                        >
-                          {product.quantity}
-                        </span>
+                      >
+                        {product.quantity}
+                      </span>
 
-                      </div>
+                    </div>
 
-                    ))}
-
-                  </div>
+                  ))}
 
                 </div>
 
-              ))}
+              </div>
 
-            </div>
+            ))}
 
           </div>
 
-        ))
+        </div>
+
+
 
       }
 

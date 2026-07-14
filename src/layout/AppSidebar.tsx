@@ -94,11 +94,11 @@ const AppSidebar: React.FC = () => {
       name: "Delivery Verifications",
       path: "/deliveryverification",
     },
-    {
-      icon: <Package />,
-      name: "Inventory",
-      path: "/inventory",
-    },
+    // {
+    //   icon: <Package />,
+    //   name: "Inventory",
+    //   path: "/inventory",
+    // },
     {
       icon: <Wallet />,
       name: "Payments",

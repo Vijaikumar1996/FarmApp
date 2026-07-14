@@ -91,7 +91,10 @@ export default function App() {
                 path="/deliveryverification"
                 element={<DeliveryVerification />}
               />
-              <Route path="/verifydelivery/:id" element={<VerifyDelivery />} />
+              <Route
+                path="/verifydelivery/:customerId/:deliveryDate"
+                element={<VerifyDelivery />}
+              />
               <Route path="/profile" element={<UserProfiles />} />
               <Route path="/users" element={<Users />} />
               <Route path="/customer-requests" element={<CustomerRequests />} />
@@ -104,7 +107,7 @@ export default function App() {
                 path="/customer-requests/edit/:id"
                 element={<CustomerRequestEdit />}
               />
-                 <Route
+              <Route
                 path="/customer-requests/view/:id"
                 element={<CustomerRequestView />}
               />

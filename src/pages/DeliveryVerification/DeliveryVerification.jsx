@@ -1,315 +1,306 @@
-// DeliveryVerification.jsx
-
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 
 import DataTable from "../../components/common/DataTable";
 import InputField from "../../components/form/form-input/InputField";
 import FormGrid from "../../components/form/FormGrid";
+import { useDeliveryVerification, useMarkAllDelivered } from "../../queries/useDeliveryVerification";
+import AsyncTypeahead from "../../components/form/form-input/AsyncTypeahead";
+import { loadCustomerOptions } from "../../utils/customerLoader";
+import DateField from "../../components/form/form-input/DateField";
+import { getTodayDate } from "../../utils/commonUtils";
+import SelectField from "../../components/form/form-input/SelectField";
 
-/* ---------------- Component ---------------- */
+
 
 export default function DeliveryVerification() {
   const navigate = useNavigate();
 
-  const { control } = useForm();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const todayDate = getTodayDate();
 
-  /* ---------------- Sample Data ---------------- */
 
-  const data = [
-    {
-      id: 1,
-      order_no: "ORD1001",
-      customer: "Ravi Kumar",
-      area: "MED",
-      order_date: "29-May-2026",
-      delivery_date: "30-May-2026",
-      verification_status: "PENDING",
+
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+  } = useForm({
+    defaultValues: {
+      customerId: "",
+      deliveryDate: todayDate,
+      status: "",
     },
+  });
+  const selectedDeliveryDate = watch("deliveryDate");
+  const [searchRequest, setSearchRequest] =
+    useState({
+      customerId: "",
+      deliveryDate: todayDate,
+      status: "",
+      pageNumber: 1,
+      pageSize: 10,
+    });
 
-    {
-      id: 2,
-      order_no: "ORD1002",
-      customer: "Manju",
-      area: "VEL",
-      order_date: "29-May-2026",
-      delivery_date: "30-May-2026",
-      verification_status: "PENDING",
-    },
-
-    {
-      id: 3,
-      order_no: "ORD1003",
-      customer: "Suresh",
-      area: "OMR",
-      order_date: "29-May-2026",
-      delivery_date: "30-May-2026",
-      verification_status: "VERIFIED",
-    },
+  const statusOptions = [
+    { id: "PENDING", name: "Pending" },
+    { id: "DELIVERED", name: "Delivered" },
+    { id: "PARTIAL_DELIVERED", name: "Partial Delivered" },
   ];
 
-  /* ---------------- Columns ---------------- */
+  /*------------------------------------------
+      Queries
+  ------------------------------------------*/
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "order_no",
-        header: "Order No",
+  const {
+    data,
+    isLoading,
+    refetch,
+  } = useDeliveryVerification(searchRequest);
 
-        cell: (info) => (
-          <span className="font-semibold text-gray-800 whitespace-nowrap">
-            {info.getValue()}
-          </span>
-        ),
-      },
 
-      {
-        accessorKey: "customer",
-        header: "Customer",
-      },
+  const canMarkAllDelivered =
+    selectedDeliveryDate === todayDate &&
+    (data?.items?.length ?? 0) > 0;
 
-      {
-        accessorKey: "area",
-        header: "Area",
-      },
+  const markAllDeliveredMutation =
+    useMarkAllDelivered();
 
-      {
-        accessorKey: "order_date",
-        header: "Order Date",
-      },
+  /*------------------------------------------
+      Search
+  ------------------------------------------*/
 
-      {
-        accessorKey: "delivery_date",
-        header: "Delivery Date",
-      },
+  const onSearch = (values) => {
+    console.log("Search values:", values);
+    setSearchRequest({
+      customerId: values.customerId ? Number(values.customerId) : null,
+      deliveryDate: values.deliveryDate,
+      status: values.status,
+      pageNumber: 1,
+      pageSize: 10,
+    });
+  };
 
-      {
-        accessorKey: "verification_status",
-        header: "Verification Status",
+  /*------------------------------------------
+      Mark All Delivered
+  ------------------------------------------*/
 
-        cell: ({ row }) => {
-          const status = row.original.verification_status;
+  const handleMarkAllDelivered = async () => {
+    try {
+      await markAllDeliveredMutation.mutateAsync({
+        deliveryDate: searchRequest.deliveryDate,
+      });
+      setShowConfirm(false);
+      refetch();
+    } catch {
+      // handle error
+    }
+  };
 
-          const styles = {
-            PENDING: "bg-orange-100 text-orange-700",
+  /*------------------------------------------
+      Columns
+  ------------------------------------------*/
 
-            VERIFIED: "bg-green-100 text-green-700",
-          };
+  const columns = useMemo(() => [
+    {
+      accessorKey: "customerName",
+      header: "Customer",
+      cell: (info) => (
+        <span className="font-medium">
+          {info.getValue()}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "area",
+      header: "Area",
+    },
+    {
+      accessorKey: "deliveryDate",
+      header: "Delivery Date",
+    },
+    {
+      accessorKey: "plannedItems",
+      header: "Ordered Items",
+      cell: ({ row }) => (
+        <div className="whitespace-normal text-sm">
+          {row.original.plannedItems}
+        </div>
+      ),
+    },
 
-          return (
-            <span
-              className={`
-                                px-3
-                                py-1
-                                rounded-full
-                                text-xs
-                                font-medium
-                                whitespace-nowrap
-                                ${styles[status]}
-                            `}
-            >
-              {status}
-            </span>
-          );
-        },
-      },
-
-      {
-        id: "actions",
-        header: "Actions",
-
-        cell: ({ row }) => (
-          <button
-            onClick={() => navigate(`/verifydelivery/${row.original.id}`)}
-            className="
-                            text-blue-600
-                            hover:underline
-                            whitespace-nowrap
-                            font-medium
-                        "
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        const styles = {
+          PENDING: "bg-orange-100 text-orange-700",
+          DELIVERED: "bg-green-100 text-green-700",
+          PARTIAL_DELIVERED: "bg-red-100 text-red-700",
+        };
+        return (
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${styles[status]}`}
           >
-            Verify
-          </button>
-        ),
+            {status.replaceAll("_", " ")}
+          </span>
+        );
       },
-    ],
-    [navigate],
-  );
+    },
+    {
+      id: "action",
+      header: "Action",
+      cell: ({ row }) => (
+        <button
+          onClick={() =>
+            navigate(
+              `/verifydelivery/${row.original.customerId}/${row.original.deliveryDate}`
+            )
+          }
+          className="text-blue-600 hover:underline font-medium"
+        >
+          Verify
+        </button>
+      ),
+    },
 
+  ], [navigate]);
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <>
+      <div className="space-y-6">
 
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Delivery Verification
-        </h1>
+        {/* Header */}
 
-        <p className="text-sm text-gray-500 mt-1">
-          Verify actual delivered products
-        </p>
-      </div>
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Delivery Verification
+          </h1>
 
-      {/* Summary Cards */}
-
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                <div className="bg-white border border-gray-200 rounded-2xl p-5">
-
-                    <p className="text-sm text-gray-500">
-                        Pending Verification
-                    </p>
-
-                    <h3 className="text-3xl font-bold text-orange-600 mt-2">
-                        12
-                    </h3>
-
-                </div>
-
-                <div className="bg-white border border-gray-200 rounded-2xl p-5">
-
-                    <p className="text-sm text-gray-500">
-                        Verified Today
-                    </p>
-
-                    <h3 className="text-3xl font-bold text-green-600 mt-2">
-                        8
-                    </h3>
-
-                </div>
-
-                <div className="bg-white border border-gray-200 rounded-2xl p-5">
-
-                    <p className="text-sm text-gray-500">
-                        Partial Deliveries
-                    </p>
-
-                    <h3 className="text-3xl font-bold text-yellow-600 mt-2">
-                        2
-                    </h3>
-
-                </div>
-
-            </div> */}
-
-      {/* Main Section */}
-
-      <div className="bg-white rounded-2xl border border-gray-200 p-5">
-        {/* Filters */}
-
-        <div className="mb-6">
-          <FormGrid cols={5} gap={4}>
-            <InputField
-              name="customer"
-              label="Customer"
-              placeholder="Search customer"
-              control={control}
-            />
-
-            {/* Order Date */}
-
-            {/* <div>
-
-                            <label className="block text-sm font-medium mb-2">
-                                Order Date
-                            </label>
-
-                            <input
-                                type="date"
-                                className="
-                                    w-full
-                                    border border-gray-300
-                                    rounded-xl
-                                    px-4 py-2.5
-                                    text-sm
-                                    focus:outline-none
-                                    focus:ring-2
-                                    focus:ring-blue-500
-                                "
-                            />
-
-                        </div> */}
-
-            {/* Delivery Date */}
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Delivery Date
-              </label>
-
-              <input
-                type="date"
-                className="
-                                    w-full
-                                    border border-gray-300
-                                    rounded-xl
-                                    px-4 py-2.5
-                                    text-sm
-                                    focus:outline-none
-                                    focus:ring-2
-                                    focus:ring-blue-500
-                                "
-              />
-            </div>
-
-            {/* Status */}
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Verification Status
-              </label>
-
-              <select
-                className="
-                                    w-full
-                                    border border-gray-300
-                                    rounded-xl
-                                    px-4 py-2.5
-                                    text-sm
-                                    focus:outline-none
-                                    focus:ring-2
-                                    focus:ring-blue-500
-                                "
-              >
-                <option value="">All</option>
-
-                <option value="PENDING">Pending</option>
-
-                <option value="VERIFIED">Verified</option>
-              </select>
-            </div>
-
-            {/* Search */}
-
-            <div className="flex items-end">
-              <button
-                className="
-                                    w-full
-                                    bg-gray-900
-                                    text-white
-                                    rounded-xl
-                                    px-4 py-2.5
-                                    hover:bg-black
-                                    transition
-                                "
-              >
-                Search
-              </button>
-            </div>
-          </FormGrid>
+          <p className="text-sm text-gray-500 mt-1">
+            Verify delivered products
+          </p>
         </div>
 
-        {/* Data Table */}
+        {/* Search Card */}
 
-        <DataTable
-          data={data}
-          columns={columns}
-          pageSize={10}
-          emptyMessage="No delivery verifications found"
-          globalSearch={false}
-        />
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+
+          <form onSubmit={handleSubmit(onSearch)}>
+
+            <FormGrid cols={5} gap={4}>
+
+              <AsyncTypeahead
+                name="customerId"
+                control={control}
+                label="Customer"
+                required
+                loadOptions={loadCustomerOptions}
+              />
+
+              <DateField
+                control={control}
+                name="deliveryDate"
+                label="Delivery Date"
+              />
+              <SelectField
+                name="status"
+                control={control}
+                label="Status"
+                options={statusOptions}
+              />
+
+              <div className="col-span-2 flex items-end gap-3">
+
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-gray-900 text-white hover:bg-black"
+                >
+                  Search
+                </button>
+                {
+                  canMarkAllDelivered && (
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirm(true)}
+                      className="px-6 py-2.5 rounded-xl bg-green-600 text-white hover:bg-green-700 whitespace-nowrap"
+                    >
+                      Mark All Delivered
+                    </button>
+
+                  )
+                }
+
+              </div>
+
+            </FormGrid>
+
+          </form>
+
+        </div>
+
+        {/* Grid */}
+
+        <div className="bg-white rounded-2xl border border-gray-200 p-5">
+
+          <DataTable
+            data={data?.items ?? []}
+            columns={columns}
+            loading={isLoading}
+            pageSize={10}
+            totalRecords={data?.totalRecords}
+            currentPage={searchRequest.pageNumber}
+            globalSearch={false}
+            emptyMessage="No delivery verification records found."
+
+            onPageChange={(page) =>
+              setSearchRequest((prev) => ({
+                ...prev,
+                pageNumber: page,
+              }))
+            }
+
+          />
+
+        </div>
+
       </div>
-    </div>
+
+      {/* Confirmation Dialog */}
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-1000">
+          <div className="bg-white rounded-2xl shadow-xl w-[430px] p-6">
+            <h2 className="text-xl font-semibold text-gray-800">Mark All Delivered</h2>
+            <p className="mt-4 text-gray-600">
+              This action will mark all pending deliveries as
+              <strong> Delivered</strong>.
+            </p>
+            <p className="mt-2 text-gray-600">
+              Delivered Quantity will be updated with Ordered Quantity.
+            </p>
+            <div className="flex justify-end gap-3 mt-8">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-5 py-2.5 rounded-xl border border-gray-300 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMarkAllDelivered}
+                disabled={markAllDeliveredMutation.isPending}
+                className="px-5 py-2.5 rounded-xl bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+              >
+                {markAllDeliveredMutation.isPending ? "Processing..." : "Mark All"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </>
+
   );
+
 }

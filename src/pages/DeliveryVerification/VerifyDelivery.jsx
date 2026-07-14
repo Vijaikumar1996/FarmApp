@@ -1,74 +1,57 @@
-// VerifyDelivery.jsx
-
+import { useNavigate, useParams } from "react-router";
 import VerifyDeliveryForm from "./VerifyDeliveryForm";
-
-/* ---------------- Component ---------------- */
+import {
+  useDeliveryVerificationDetails,
+  useSaveVerification
+} from "../../queries/useDeliveryVerification";
 
 export default function VerifyDelivery() {
-  /* ---------------- Sample Order ---------------- */
 
-  const order = {
-    order_no: "ORD1001",
-    customer: "Ravi Kumar",
-    area: "MED",
-    delivery_date: "2026-05-30",
+  const navigate = useNavigate();
+  const { customerId, deliveryDate } = useParams();
 
-    items: [
-      {
-        id: 1,
-        product: "OLB",
-        qty: 1,
-      },
-
-      {
-        id: 2,
-        product: "HLB",
-        qty: 2,
-      },
-
-      {
-        id: 3,
-        product: "Paneer",
-        qty: 1,
-      },
-
-      {
-        id: 4,
-        product: "Tender Coconut",
-        qty: 3,
-      },
-    ],
+  const {
+    data,
+    isLoading,
+    refetch
+  } = useDeliveryVerificationDetails(
+    customerId,
+    deliveryDate
+  );
+  console.log("data", data);
+  const saveMutation = useSaveVerification();
+  const handleSubmit = async (payload) => {
+    await saveMutation.mutateAsync(payload);
+    await refetch();
+    navigate("/deliveryverification");
   };
 
-  /* ---------------- Submit ---------------- */
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  const handleSubmit = (data) => {
-    console.log("Verification Payload :", data);
-
-    // API CALL HERE
-  };
-
+  if (!data) {
+    return <div>No Data Found</div>;
+  }
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        {/* Header */}
-
-        <div className="border-b border-gray-200 px-8 py-6">
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Delivery Verification
-          </h1>
-
-          <p className="text-sm text-gray-500 mt-1">
-            Verify delivered products and substitutions
-          </p>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-semibold">Delivery Verification</h1>
+          <p className="text-gray-500 mt-1">Verify delivered products</p>
         </div>
-
-        {/* Form */}
-
-        <div className="p-8">
-          <VerifyDeliveryForm order={order} onSubmit={handleSubmit} />
-        </div>
+        <button
+          onClick={() => navigate(-1)}
+          className="border px-4 py-2 rounded-xl hover:bg-gray-50"
+        >
+          Back
+        </button>
       </div>
+      <VerifyDeliveryForm
+        delivery={data}
+        onSubmit={handleSubmit}
+        isSaving={saveMutation.isPending}
+      />
     </div>
   );
 }

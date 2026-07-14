@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { useProductDropdown } from "../../../queries/useProduct";
 import SelectField from "../form-input/SelectField";
 
@@ -8,10 +10,17 @@ export default function ProductDropdown({
   required = false,
   placeholder = "Select Product",
   error,
+  excludedProductIds = [],
 }) {
   const { data } = useProductDropdown();
-  console.log("ProductDropdown data:", data);
-  const options = data?.data ?? data ?? [];
+
+  const options = useMemo(() => {
+    const products = data?.data ?? data ?? [];
+
+    return products.filter(
+      (x) => !excludedProductIds.includes(Number(x.id))
+    );
+  }, [data, excludedProductIds]);
 
   return (
     <SelectField
