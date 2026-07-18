@@ -34,6 +34,8 @@ import CustomerRequests from "./pages/Orders/CustomerRequests";
 import CustomerRequestCreate from "./pages/Orders/CustomerRequestCreate";
 import CustomerRequestEdit from "./pages/Orders/CustomerRequestEdit";
 import CustomerRequestView from "./pages/Orders/CustomerRequestView";
+import BillingList from "./pages/Billing/BillingList";
+import BillingDetails from "./pages/Billing/BillingDetails";
 
 export default function App() {
   const isFetching = useIsFetching();
@@ -111,7 +113,8 @@ export default function App() {
                 path="/customer-requests/view/:id"
                 element={<CustomerRequestView />}
               />
-              <Route path="/payments" element={<Payments />} />
+              <Route path="/payments" element={<BillingList />} />
+              <Route path="/billing/details" element={<BillingDetails />} />
 
               <Route
                 path="/payments/bill/:billingId"

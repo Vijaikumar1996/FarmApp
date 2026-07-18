@@ -13,6 +13,7 @@ import EditArea from "./EditArea";
 import { useAreas } from "../../queries/useArea";
 import Button from "../../components/ui/button/Button";
 import { FilePlus, Plus } from "lucide-react";
+import CommonDrawer from "../../components/common/CommonDrawer";
 
 export default function Areas() {
   const { control, register, handleSubmit } = useForm({
@@ -85,11 +86,10 @@ export default function Areas() {
 
           return (
             <span
-              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                active
+              className={`px-3 py-1 rounded-full text-xs font-medium ${active
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-700"
-              }`}
+                }`}
             >
               {active ? "ACTIVE" : "INACTIVE"}
             </span>
@@ -183,20 +183,27 @@ export default function Areas() {
         />
       </div>
 
-      {isDrawerOpen && (
-        <div className="fixed inset-0 bg-black/40 z-1000 flex justify-end">
-          <div className="w-full max-w-3xl bg-white h-full overflow-y-auto shadow-2xl">
-            {isEdit ? (
-              <EditArea
-                area={selectedArea}
-                onClose={() => setIsDrawerOpen(false)}
-              />
-            ) : (
-              <CreateArea onClose={() => setIsDrawerOpen(false)} />
-            )}
-          </div>
-        </div>
-      )}
+      <CommonDrawer
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+      >
+
+        {isEdit ? (
+
+          <EditArea
+            area={selectedArea}
+            onClose={() => setIsDrawerOpen(false)}
+          />
+
+        ) : (
+
+          <CreateArea
+            onClose={() => setIsDrawerOpen(false)}
+          />
+
+        )}
+
+      </CommonDrawer>
     </div>
   );
 }

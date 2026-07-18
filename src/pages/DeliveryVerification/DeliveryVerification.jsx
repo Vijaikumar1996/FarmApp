@@ -221,7 +221,7 @@ export default function DeliveryVerification() {
                   Search
                 </button>
                 {
-                  canMarkAllDelivered && (
+                  true && (
                     <button
                       type="button"
                       onClick={() => setShowConfirm(true)}
