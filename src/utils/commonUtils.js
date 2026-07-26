@@ -27,3 +27,15 @@ export const isFutureDate = (date) => {
 
   return requestDate > today;
 };
+
+
+// utils/dateUtils.js
+
+export const getPreviousMonth = () => {
+  const previousMonth = new Date();
+  previousMonth.setMonth(previousMonth.getMonth() - 1);
+
+  return `${previousMonth.getFullYear()}-${String(
+    previousMonth.getMonth() + 1
+  ).padStart(2, "0")}-01`;
+};

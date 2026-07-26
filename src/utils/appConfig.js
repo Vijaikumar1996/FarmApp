@@ -7,6 +7,8 @@ const AppConfig = {
   appDescription: import.meta.env.VITE_APP_DESCRIPTION,
   companyName: import.meta.env.VITE_COMPANY_NAME,
   companySubName: import.meta.env.VITE_COMPANY_SUBNAME,
+  secondaryCompanyName: import.meta.env.VITE_SECONDAY_COMPANY_NAME,
+  secondayCompanySubName: import.meta.env.VITE_SECONDAY_COMPANY_SUBNAME,
   apiUrl: import.meta.env.VITE_API_URL,
   supportEmail: import.meta.env.VITE_SUPPORT_EMAIL,
   version: import.meta.env.VITE_VERSION,

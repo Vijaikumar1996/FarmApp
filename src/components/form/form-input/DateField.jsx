@@ -2,6 +2,7 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/light.css";
 import monthSelectPlugin from "flatpickr/dist/plugins/monthSelect";
 import "flatpickr/dist/plugins/monthSelect/style.css";
+import "../../../css/flatpickr-custom.css";
 import { Controller } from "react-hook-form";
 
 export default function DateField({

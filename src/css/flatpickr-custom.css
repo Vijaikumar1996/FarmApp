@@ -1,0 +1,9 @@
+/* Reduce popup width */
+.flatpickr-monthSelect-theme-light {
+    width: 260px !important;
+    min-width: 260px !important;
+}
+
+.flatpickr-monthSelect-month{
+    width : 30% !important;
+}

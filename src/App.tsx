@@ -21,7 +21,6 @@ import Products from "./pages/Products/Products";
 import DeliveryVerification from "./pages/DeliveryVerification/DeliveryVerification";
 import VerifyDelivery from "./pages/DeliveryVerification/VerifyDelivery";
 import DeliveryPlanning from "./pages/DeliveryPlanning/DeliveryPlanning";
-import Payments from "./pages/Payments/Payments";
 import CustomerLedger from "./pages/Payments/CustomerLedger";
 import Inventory from "./pages/Inventory/Inventory";
 import CollectPayment from "./pages/Payments/CollectPayment";
@@ -36,6 +35,7 @@ import CustomerRequestEdit from "./pages/Orders/CustomerRequestEdit";
 import CustomerRequestView from "./pages/Orders/CustomerRequestView";
 import BillingList from "./pages/Billing/BillingList";
 import BillingDetails from "./pages/Billing/BillingDetails";
+import SummaryBill from "./pages/Billing/BillCopy/SummaryBill";
 
 export default function App() {
   const isFetching = useIsFetching();
@@ -78,6 +78,11 @@ export default function App() {
 
         <Routes>
           <Route element={<PrivateRoute />}>
+            <Route
+              path="/billing/summary-print"
+              element={<SummaryBill />}
+            />
+
             <Route element={<AppLayout />}>
               <Route index path="/home" element={<Home />} />
 
@@ -113,8 +118,9 @@ export default function App() {
                 path="/customer-requests/view/:id"
                 element={<CustomerRequestView />}
               />
-              <Route path="/payments" element={<BillingList />} />
+              <Route path="/billing" element={<BillingList />} />
               <Route path="/billing/details" element={<BillingDetails />} />
+
 
               <Route
                 path="/payments/bill/:billingId"

@@ -5,6 +5,7 @@ import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
 import { useSelector } from "react-redux";
+import AppConfig from "../utils/appConfig";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -78,15 +79,14 @@ const AppHeader: React.FC = () => {
         <div className="hidden lg:flex flex-1 justify-center items-center">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">
             {/* {user?.InstituteName || "Tuition Center"} */}
-            Dhariya Farms
+            {AppConfig.companyName}
           </h2>
         </div>
 
         {/* 🔹 RIGHT SECTION */}
         <div
-          className={`${
-            isApplicationMenuOpen ? "flex" : "hidden"
-          } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
+          className={`${isApplicationMenuOpen ? "flex" : "hidden"
+            } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
         >
           {/* Optional */}
           {/* <ThemeToggleButton /> */}

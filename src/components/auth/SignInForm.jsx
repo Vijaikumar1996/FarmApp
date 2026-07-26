@@ -22,8 +22,6 @@ const loginSchema = z.object({
   Password: z.string().min(1, "Password is required"),
 });
 
-/* ---------------- Component ---------------- */
-
 export default function SignInForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -44,8 +42,6 @@ export default function SignInForm() {
     },
   });
 
-  /* Handle submit */
-
   const onSubmit = (data) => {
     dispatch(
       loginUser({
@@ -55,16 +51,12 @@ export default function SignInForm() {
     );
   };
 
-  /* Success login */
-
   useEffect(() => {
     if (user) {
       toast.success("Login successful");
       navigate("/home");
     }
   }, [user, navigate]);
-
-  /* Error */
 
   useEffect(() => {
     if (error) {
@@ -73,43 +65,44 @@ export default function SignInForm() {
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg pt-2 p-8">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-3 w-full px-2">
-          <img
-            src="/images/logo/logo.jpeg"
-            alt={AppConfig.companyName}
-            className="object-contain flex-shrink-0 w-40 h-40 rounded-full"
-          />
-          {/* <div>
-            <h2 className="text-sm font-bold tracking-wide text-gray-900 dark:text-white uppercase">
-              {AppConfig.companyName}
-            </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 px-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 px-8 pb-5">
 
-            <p className="text-[11px] text-gray-500 uppercase tracking-wider">
-              {AppConfig.companySubName}
-            </p>
-          </div> */}
+        {/* Brand */}
+
+        <div className="flex items-center justify-center gap-3">
+
+          <img
+            src="/images/logo/full-logo.png"
+            alt="logo"
+           className="h-40 rounded-full"
+          />
+         
         </div>
 
-        {/* Heading */}
+        {/* Welcome */}
 
-        <div className="mb-6">
-          <h1 className="mb-2 font-semibold text-gray-800 text-2xl dark:text-white">
-            Sign In
-          </h1>
+        <div className="mb-8 text-center">
 
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Enter your username and password to sign in!
+          <h2 className="text-3xl font-bold text-gray-800">
+            Welcome Back
+          </h2>
+
+          <p className="mt-2 text-gray-500">
+            Sign in to continue to
           </p>
+
+          <p className="font-semibold text-[#1E5B34]">
+            {AppConfig.companyName}
+          </p>
+
         </div>
 
         {/* Form */}
 
         <form onSubmit={handleSubmit(onSubmit)}>
+
           <FormGrid cols={1}>
-            {/* Username */}
 
             <InputField
               name="Username"
@@ -121,9 +114,8 @@ export default function SignInForm() {
               required
             />
 
-            {/* Password */}
-
             <div className="relative">
+
               <InputField
                 name="Password"
                 label="Password"
@@ -139,25 +131,27 @@ export default function SignInForm() {
                 className="absolute right-4 top-[38px] cursor-pointer"
               >
                 {showPassword ? (
-                  <EyeOffIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                  <EyeOffIcon className="size-5 text-gray-500" />
                 ) : (
-                  <EyeClosed className="fill-gray-500 dark:fill-gray-400 size-5" />
+                  <EyeClosed className="size-5 text-gray-500" />
                 )}
               </span>
-            </div>
-          </FormGrid>
 
-          {/* Button */}
+            </div>
+
+          </FormGrid>
 
           <Button
             type="submit"
-            className="w-full mt-6"
             size="sm"
             disabled={loading}
+            className="w-full mt-8 bg-[#1E5B34] hover:bg-[#17462A] text-white rounded-xl"
           >
             {loading ? "Signing in..." : "Sign In"}
           </Button>
+
         </form>
+
       </div>
     </div>
   );

@@ -46,58 +46,9 @@ export default function PaymentForm({
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-6"
         >
-
-            {/* Customer Information */}
-
-            <div className="rounded-xl bg-gray-50 border p-4">
-
-                <h3 className="font-semibold mb-4">
-
-                    Customer Details
-
-                </h3>
-
-                <FormGrid cols={2}>
-
-                    <div>
-
-                        <label className="text-sm text-gray-500">
-
-                            Customer
-
-                        </label>
-
-                        <p className="font-medium">
-
-                            {summary.customerName}
-
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <label className="text-sm text-gray-500">
-
-                            Billing Month
-
-                        </label>
-
-                        <p className="font-medium">
-
-                            {summary.billingMonth}
-
-                        </p>
-
-                    </div>
-
-                </FormGrid>
-
-            </div>
-
             {/* Bill Summary */}
 
-            <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
+            <div className="rounded-xl bg-blue-50 border border-blue-200 pt-2 p-4">
 
                 <h3 className="font-semibold mb-4">
 

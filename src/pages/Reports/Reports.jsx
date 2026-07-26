@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MonthlySalesChart from "../../components/dashboard/PendingPayments";
+import MonthlySalesChart from "../Dashboard/PendingPayments";
 import BarChartOne from "../../components/charts/bar/BarChartOne";
 import BatchWiseChart from "./BatchWiseChart";
 

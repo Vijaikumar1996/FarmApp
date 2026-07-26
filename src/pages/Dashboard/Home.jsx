@@ -1,36 +1,35 @@
-import DashboardMetrics from "../../components/dashboard/DashboardMetrics";
-import MonthlySalesChart from "../../components/dashboard/PendingPayments";
+
+
 import PageMeta from "../../components/common/PageMeta";
-import RecentOrders from "../../components/dashboard/RecentOrders";
+import RecentOrders from "./RecentOrders";
 
 import { useDashboard } from "../../queries/useDashboard";
-import RecentScanActivity from "../../components/dashboard/PendingPayments";
-import PendingPayments from "../../components/dashboard/PendingPayments";
+import RecentScanActivity from "./PendingPayments";
+import PendingPayments from "./PendingPayments";
+import DashboardMetrics from "./DashboardMetrics";
 
 export default function Home() {
+  const { data, isLoading } = useDashboard();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      <PageMeta title="Dhariya Farms - Dashboard" description="Dashboard" />
+      <PageMeta title="Dashboard" description="Dashboard" />
 
-      <div className="grid grid-cols-12 gap-4 md:gap-2 items-stretch">
-        {/* Metrics */}
+      <div className="grid grid-cols-12 gap-4 md:gap-2">
         <div className="col-span-12">
-          <DashboardMetrics />
+          <DashboardMetrics data={data} />
         </div>
 
-        {/* Chart */}
-
-        {/* Recent Payments */}
-        {/* <div className="col-span-12 xl:col-span-6">
-          <RecentPayments />
-        </div> */}
-
-        <div className="col-span-12 xl:col-span-6 h-full">
-          <RecentOrders />
+        <div className="col-span-12 xl:col-span-6">
+          <RecentOrders data={data?.recentRequests} />
         </div>
 
-        <div className="col-span-12 xl:col-span-6 h-full">
-          <PendingPayments />
+        <div className="col-span-12 xl:col-span-6">
+          <PendingPayments data={data?.pendingPayments} />
         </div>
       </div>
     </>

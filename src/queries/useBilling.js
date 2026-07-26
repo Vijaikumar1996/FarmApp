@@ -10,7 +10,8 @@ import {
     searchBillings,
     getBillingDetails,
     savePayment,
-    saveAdjustment
+    saveAdjustment,
+    getSummaryBill
 } from "../services/billingService";
 
 const BILLING = "billing";
@@ -28,7 +29,7 @@ export function useBilling(searchRequest) {
         queryFn: () =>
             searchBillings(searchRequest),
 
-        enabled: !!searchRequest.billingMonth
+        enabled: !!searchRequest.BillingMonth
 
     });
 
@@ -130,6 +131,35 @@ export function useSaveAdjustment() {
             );
 
         }
+
+    });
+
+}
+
+const SUMMARY_BILL = "summary-bill";
+
+export function useSummaryBill(
+    customerId,
+    billingMonth
+) {
+
+    return useQuery({
+
+        queryKey: [
+            SUMMARY_BILL,
+            customerId,
+            billingMonth
+        ],
+
+        queryFn: () =>
+            getSummaryBill(
+                customerId,
+                billingMonth
+            ),
+
+        enabled:
+            !!customerId &&
+            !!billingMonth
 
     });
 

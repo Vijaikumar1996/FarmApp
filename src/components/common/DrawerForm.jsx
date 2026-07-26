@@ -9,7 +9,7 @@ export default function DrawerForm({
 }) {
   return (
     <div>
-      <div className="flex items-center justify-between p-6 border-b">
+      <div className="flex items-center justify-between py-4 px-6 border-b">
         <div>
           <h2 className="text-xl font-semibold">{title}</h2>
 
@@ -21,7 +21,7 @@ export default function DrawerForm({
         </button>
       </div>
 
-      <div className="p-6">{children}</div>
+      <div className="p-4 py-3">{children}</div>
     </div>
   );
 }

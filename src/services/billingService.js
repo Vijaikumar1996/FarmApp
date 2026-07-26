@@ -49,3 +49,21 @@ export const saveAdjustment = async (payload) => {
 
     return response.data;
 };
+
+export const getSummaryBill = async (
+    customerId,
+    billingMonth
+) => {
+
+    const response = await apiClient.get(
+        `${BASE_URL}/summary-bill`,
+        {
+            params: {
+                customerId,
+                billingMonth
+            }
+        });
+
+    return response.data;
+
+};

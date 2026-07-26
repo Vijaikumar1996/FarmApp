@@ -48,8 +48,7 @@ export default function CreatePayment({
 
             title="Receive Payment"
 
-            subtitle="Receive customer payment"
-
+      
             onClose={onClose}
 
         >
