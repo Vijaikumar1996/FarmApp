@@ -6,8 +6,8 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="Vikosha | Sign In"
-        description="Vikosha Tuition App Sign In Page"
+        title="Sign In"
+        description=""
       />
       <SignInForm />
       {/* <AuthLayout>

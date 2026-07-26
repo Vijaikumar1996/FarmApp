@@ -20,7 +20,7 @@ export default function AreaForm({
       .string()
       .trim()
       .min(1, "Area Code is required.")
-      .max(10, "Maximum 10 characters allowed."),
+      .max(20, "Maximum 20 characters allowed."),
     areaName: z
       .string()
       .trim()
