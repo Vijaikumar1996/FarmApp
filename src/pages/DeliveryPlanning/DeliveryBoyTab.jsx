@@ -293,8 +293,7 @@ export default function DeliveryBoyTab() {
         loading={isLoading}
 
         pageSize={20}
-
-        globalSearch={false}
+     
 
         emptyMessage="No delivery records found."
 

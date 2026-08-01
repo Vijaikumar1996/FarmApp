@@ -269,8 +269,7 @@ export default function FarmSummaryTab() {
         data={tableData}
         columns={columns}
         loading={isLoading}
-        pageSize={20}
-        globalSearch={false}
+        pageSize={20}       
         emptyMessage="No farm summary available."
       />
 

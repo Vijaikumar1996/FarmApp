@@ -223,8 +223,7 @@ export default function Products() {
           loading={isLoading}
           pageSize={10}
           pinnedColumns={pinnedColumns}
-          emptyMessage="No products found"
-          globalSearch={false}
+          emptyMessage="No products found"        
         />
       </div>
 

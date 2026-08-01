@@ -5,6 +5,11 @@ export const getAreas = async (params) => {
   return data;
 };
 
+export const getAreaDropdown = async () => {
+  const { data } = await apiClient.get("/areas/dropdown");
+  return data;
+};
+
 export const getAreaById = async (id) => {
   const { data } = await apiClient.get(`/areas/${id}`);
   return data;

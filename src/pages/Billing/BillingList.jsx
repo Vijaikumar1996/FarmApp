@@ -184,8 +184,7 @@ export default function BillingList() {
                     columns={columns}
                     pageSize={10}
                     pinnedColumns={pinnedColumns}
-                    loading={isLoading}
-                    globalSearch={false}
+                    loading={isLoading}                   
                     emptyMessage="No billing records found."
                 />
             </div>

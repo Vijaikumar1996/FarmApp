@@ -18,6 +18,7 @@ import ProductDropdown from "../../components/form/custom-input/ProductDropdown"
 import AsyncTypeahead from "../../components/form/form-input/AsyncTypeahead";
 
 import { loadCustomerOptions } from "../../utils/customerLoader";
+import AreaDropdown from "../../components/form/custom-input/AreaDropdown";
 
 export default function CustomerSubscriptions() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function CustomerSubscriptions() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       customerId: "",
+      areaId: "",
       productId: "",
       isActive: "",
       pageNumber: 1,
@@ -34,6 +36,7 @@ export default function CustomerSubscriptions() {
 
   const [searchRequest, setSearchRequest] = useState({
     customerId: null,
+    areaId: null,
     productId: null,
     isActive: null,
     pageNumber: 1,
@@ -57,6 +60,7 @@ export default function CustomerSubscriptions() {
   const onSearch = (values) => {
     setSearchRequest({
       customerId: values.customerId ? Number(values.customerId) : null,
+      areaId: values.areaId ? Number(values.areaId) : null,
       productId: values.productId ? Number(values.productId) : null,
       isActive: values.isActive === "" ? null : values.isActive === "true",
       pageNumber: 1,
@@ -71,7 +75,11 @@ export default function CustomerSubscriptions() {
         header: "Customer",
       },
       {
-        accessorKey: "productName",
+        accessorKey: "address",
+        header: "Address",
+      },
+      {
+        accessorKey: "productCode",
         header: "Product",
       },
       {
@@ -90,11 +98,10 @@ export default function CustomerSubscriptions() {
 
           return (
             <span
-              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                active
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
+              className={`px-3 py-1 rounded-full text-xs font-medium ${active
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+                }`}
             >
               {active ? "ACTIVE" : "INACTIVE"}
             </span>
@@ -136,12 +143,18 @@ export default function CustomerSubscriptions() {
 
       <div className="bg-white p-5 rounded-2xl border">
         <div className="mb-5">
-          <FormGrid cols={4} gap={4}>
+          <FormGrid cols={5} gap={4}>
+            <AreaDropdown
+              control={control}
+              name="areaId"
+              label="Area"
+              placeholder="Select Area"
+            />
+
             <AsyncTypeahead
               name="customerId"
               control={control}
               label="Customer"
-              required
               loadOptions={loadCustomerOptions}
             />
 
@@ -164,8 +177,7 @@ export default function CustomerSubscriptions() {
           data={subscriptions}
           columns={columns}
           loading={isLoading}
-          pageSize={10}
-          globalSearch={false}
+          pageSize={10}        
           emptyMessage="No subscriptions found"
         />
       </div>

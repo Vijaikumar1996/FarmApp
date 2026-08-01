@@ -178,8 +178,7 @@ export default function Areas() {
           pageSize={10}
           pinnedColumns={pinnedColumns}
           loading={isLoading}
-          emptyMessage="No areas found"
-          globalSearch={false}
+          emptyMessage="No areas found"      
         />
       </div>
 

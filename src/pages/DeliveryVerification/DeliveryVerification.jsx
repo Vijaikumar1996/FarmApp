@@ -252,7 +252,6 @@ export default function DeliveryVerification() {
             pageSize={10}
             totalRecords={data?.totalRecords}
             currentPage={searchRequest.pageNumber}
-            globalSearch={false}
             emptyMessage="No delivery verification records found."
 
             onPageChange={(page) =>

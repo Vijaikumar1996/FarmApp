@@ -192,8 +192,7 @@ export default function DeliveryLocations() {
           pageSize={10}
           pinnedColumns={pinnedColumns}
           loading={isLoading}
-          emptyMessage="No delivery locations found"
-          globalSearch={false}
+          emptyMessage="No delivery locations found"         
         />
       </div>
 

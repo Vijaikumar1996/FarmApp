@@ -37,7 +37,7 @@ export default function EditArea({ area, onClose }) {
           defaultValues={{
             areaCode: area.areaCode,
             areaName: area.areaName,
-            isActive: area.isActive,
+            isActive: area.isActive ? "true" : "false",
           }}
           onSubmit={handleUpdateArea}
           isLoading={updateMutation.isPending}

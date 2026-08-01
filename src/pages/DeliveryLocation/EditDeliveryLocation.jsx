@@ -47,7 +47,7 @@ export default function EditDeliveryLocation({ deliveryLocation, onClose }) {
 
           address: deliveryLocation.address ?? "",
 
-          isActive: deliveryLocation.isActive,
+          isActive: deliveryLocation.isActive ? "true" : "false",
         }}
 
         onSubmit={handleUpdateDeliveryLocation}

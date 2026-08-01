@@ -21,6 +21,7 @@ export default function DataTable({
   totalRecords = 0,
   onPageChange,
   onPageSizeChange,
+  showTotalRecords = true,
 }) {
   const [sorting, setSorting] = useState([]);
   const [columnPinning, setColumnPinning] = useState(pinnedColumns);
@@ -39,9 +40,9 @@ export default function DataTable({
     ...(serverPagination
       ? {}
       : {
-          getPaginationRowModel: getPaginationRowModel(),
-          getFilteredRowModel: getFilteredRowModel(),
-        }),
+        getPaginationRowModel: getPaginationRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+      }),
   });
 
   const totalPages = useMemo(
@@ -59,16 +60,31 @@ export default function DataTable({
 
   return (
     <div className="overflow-x-auto">
-      {globalSearch && !serverPagination && (
-        <div className="mb-4 text-right">
+
+      <div className="mb-2 flex items-center justify-between">
+        {showTotalRecords && (
+          <div className="text-sm text-gray-600 whitespace-nowrap">
+            Total Records:{" "}
+            <span className="font-semibold">
+              {serverPagination
+                ? totalRecords
+                : table.getFilteredRowModel().rows.length}
+            </span>
+          </div>
+        )}
+        {globalSearch && !serverPagination ? (
           <input
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
             placeholder="Search..."
             className="border px-3 py-2 rounded w-full max-w-sm"
           />
-        </div>
-      )}
+        ) : (
+          <div />
+        )}
+
+
+      </div>
 
       <table className="min-w-full text-sm border">
         <thead className="bg-gray-50">
@@ -79,9 +95,8 @@ export default function DataTable({
                 return (
                   <th
                     key={header.id}
-                    className={`px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer ${
-                      isPinned ? "sticky left-0 bg-gray-50 z-10" : ""
-                    }`}
+                    className={`px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer ${isPinned ? "sticky left-0 bg-gray-50 z-10" : ""
+                      }`}
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     {flexRender(

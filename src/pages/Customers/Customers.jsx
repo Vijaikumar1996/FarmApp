@@ -140,18 +140,22 @@ export default function Customers() {
         header: "Mobile",
       },
       {
-        accessorKey: "areaName",
+        accessorKey: "address",
+        header: "Address",
+      },
+      {
+        accessorKey: "areaCode",
         header: "Area",
       },
-      {
-        accessorKey: "deliveryLocationName",
-        header: "Delivery Location",
-        cell: (info) => info.getValue() ?? "-",
-      },
-      {
-        accessorKey: "houseDoorNo",
-        header: "House / Door No",
-      },
+      // {
+      //   accessorKey: "deliveryLocationName",
+      //   header: "Delivery Location",
+      //   cell: (info) => info.getValue() ?? "-",
+      // },
+      // {
+      //   accessorKey: "houseDoorNo",
+      //   header: "House / Door No",
+      // },
       {
         accessorKey: "isActive",
         header: "Status",
@@ -160,11 +164,10 @@ export default function Customers() {
 
           return (
             <span
-              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                active
+              className={`px-3 py-1 rounded-full text-xs font-medium ${active
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-700"
-              }`}
+                }`}
             >
               {active ? "ACTIVE" : "INACTIVE"}
             </span>
@@ -281,7 +284,6 @@ export default function Customers() {
           pinnedColumns={pinnedColumns}
           loading={isLoading}
           emptyMessage="No customers found"
-          globalSearch={false}
         />
       </div>
 

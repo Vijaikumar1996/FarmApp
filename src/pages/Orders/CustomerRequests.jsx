@@ -239,8 +239,7 @@ export default function CustomerRequests() {
           data={requests}
           columns={columns}
           loading={isLoading}
-          pageSize={10}
-          globalSearch={false}
+          pageSize={10}   
           emptyMessage="No customer requests found"
         />
       </div>

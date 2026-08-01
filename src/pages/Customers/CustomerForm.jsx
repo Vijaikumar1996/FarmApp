@@ -31,7 +31,7 @@ export default function CustomerForm({
     resolver: zodResolver(customerSchema),
     defaultValues,
   });
-
+  console.log(errors);
   const { data: areaData } = useAreas();
   const { data: deliveryLocationData } = useDeliveryLocations();
 

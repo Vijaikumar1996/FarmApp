@@ -83,6 +83,7 @@ export default function PendingPayments({ data = [] }) {
         columns={columns}
         pageSize={5}
         globalSearch={false}
+        showTotalRecords={false}
         emptyMessage="No pending payments found."
       />
     </div>

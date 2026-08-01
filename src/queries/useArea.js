@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 import {
   getAreas,
+  getAreaDropdown,
   createArea,
   updateArea,
   deleteArea,
@@ -14,6 +15,14 @@ export const useAreas = (params) =>
     queryKey: ["areas", params],
     queryFn: () => getAreas(params),
   });
+
+export const useAreaDropdown = () => {
+  return useQuery({
+    queryKey: ["area-dropdown"],
+    queryFn: getAreaDropdown,
+    staleTime: Infinity,
+  });
+};
 
 export function useCreateArea() {
   const queryClient = useQueryClient();
@@ -69,3 +78,5 @@ export const useDeleteArea = () => {
     },
   });
 };
+
+

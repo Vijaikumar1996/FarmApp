@@ -91,6 +91,7 @@ export default function RecentOrders({ data = [] }) {
         pinnedColumns={pinnedColumns}
         emptyMessage="No recent requests found"
         globalSearch={false}
+        showTotalRecords={false}
       />
     </div>
   );

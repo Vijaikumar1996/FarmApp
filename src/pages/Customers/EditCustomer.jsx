@@ -73,8 +73,8 @@ export default function EditCustomer({ customer, onClose }) {
           remarks: customer.remarks ?? "",
 
           deliveryNotes: customer.deliveryNotes ?? "",
-
-          isActive: customer.isActive,
+        
+          isActive: customer.isActive === true ? "true" : "false",
         }}
 
         onSubmit={handleUpdateCustomer}
