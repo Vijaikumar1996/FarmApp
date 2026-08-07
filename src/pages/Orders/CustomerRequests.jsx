@@ -118,6 +118,10 @@ export default function CustomerRequests() {
         header: "Customer",
       },
       {
+        accessorKey: "address",
+        header: "Address",
+      },
+      {
         accessorKey: "requestDescription",
         header: "Description",
       },
