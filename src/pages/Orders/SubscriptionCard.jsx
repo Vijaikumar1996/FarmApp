@@ -11,13 +11,11 @@ export default function SubscriptionCard({
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="text-lg font-semibold">
-            {subscription.productName}
+            {subscription.productCode}
           </div>
 
-          <div className="text-sm text-gray-500 mt-1">
-            {subscription.scheduleDescription}
-            <span className="mx-2">•</span>
-            Qty : {subscription.quantity}
+          <div className="text-sm mt-1">
+            {subscription.scheduleDescription}           
           </div>
 
         </div>
