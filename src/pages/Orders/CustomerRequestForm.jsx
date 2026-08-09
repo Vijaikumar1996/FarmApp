@@ -127,6 +127,7 @@ export default function CustomerRequestForm({
                   key={subscription.subscriptionId}
                   subscription={subscription}
                   readOnly={readOnly}
+                  deliveryDate={deliveryDate}
                   onReplace={(item) =>
                     setDrawer({
                       open: true,
