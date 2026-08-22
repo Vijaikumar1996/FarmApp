@@ -128,19 +128,34 @@ export default function BillingDetails() {
             </div>
 
             <div className="bg-white border rounded-2xl px-5 py-4">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <p className="text-md">
-                            <span className="font-semibold">Customer :</span>{" "}
-                            {summary.customerName}{" | "}
-                            {summary.mobileNo}{" | "}
-                            {summary.deliveryLocationName}{" | "}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                    {/* Customer Details */}
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500">
+                                Customer
+                            </span>
+
+                            <span className="font-semibold text-gray-900">
+                                {summary.customerName}
+                            </span>
+                        </div>
+
+                        <div className="mt-1 text-sm text-gray-600 leading-5">
                             {summary.areaName}
-                        </p>
+                        </div>
                     </div>
-                    <div>
-                        <span className="text-sm text-gray-500">Billing Month :</span>
-                        <span className="ml-2 font-semibold">{summary.billingMonth}</span>
+
+                    {/* Billing Month */}
+                    <div className="shrink-0 bg-gray-50 border rounded-xl px-4 py-2">
+                        <div className="text-xs text-gray-500">
+                            Billing Month
+                        </div>
+
+                        <div className="font-semibold text-gray-900">
+                            {summary.billingMonth}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -59,30 +59,108 @@ export default function BillingList() {
             {
                 accessorKey: "customerName",
                 header: "Customer",
-                cell: ({ row }) => <span className="font-semibold text-gray-800">{row.original.customerName}</span>,
+                cell: ({ row }) => (
+                    <span className="font-semibold text-gray-800">
+                        {row.original.customerName}
+                    </span>
+                ),
             },
-            { accessorKey: "areaCode", header: "Area" },
-            { accessorKey: "productAmount", header: "Products", cell: ({ row }) => <span>₹{row.original.productAmount.toFixed(2)}</span> },
-            { accessorKey: "deliveryCharge", header: "Delivery", cell: ({ row }) => <span>₹{row.original.deliveryCharge.toFixed(2)}</span> },
-            { accessorKey: "adjustmentAmount", header: "Adjustment", cell: ({ row }) => <span>₹{row.original.adjustmentAmount.toFixed(2)}</span> },
+
+            {
+                accessorKey: "address",
+                header: "Address",
+            },
+
+            {
+                accessorKey: "productAmount",
+                header: "Products",
+                cell: ({ row }) => (
+                    <span>₹{row.original.productAmount.toFixed(2)}</span>
+                ),
+            },
+
+            {
+                accessorKey: "deliveryCharge",
+                header: "Delivery",
+                cell: ({ row }) => (
+                    <span>₹{row.original.deliveryCharge.toFixed(2)}</span>
+                ),
+            },
+
+            {
+                accessorKey: "adjustmentAmount",
+                header: "Adjustment",
+                cell: ({ row }) => (
+                    <span>₹{row.original.adjustmentAmount.toFixed(2)}</span>
+                ),
+            },
+
             {
                 id: "totalBill",
+                accessorFn: (row) =>
+                    row.productAmount +
+                    row.deliveryCharge +
+                    row.adjustmentAmount,
                 header: "Total Bill",
                 cell: ({ row }) => {
-                    const total = row.original.productAmount + row.original.deliveryCharge + row.original.adjustmentAmount;
-                    return <span className="font-semibold">₹{total.toFixed(2)}</span>;
+                    const total =
+                        row.original.productAmount +
+                        row.original.deliveryCharge +
+                        row.original.adjustmentAmount;
+
+                    return (
+                        <span className="font-semibold">
+                            ₹{total.toFixed(2)}
+                        </span>
+                    );
                 },
             },
-            { accessorKey: "paidAmount", header: "Paid", cell: ({ row }) => <span className="text-green-600 font-medium">₹{row.original.paidAmount.toFixed(2)}</span> },
-            { accessorKey: "balanceAmount", header: "Balance", cell: ({ row }) => <span className="text-red-600 font-medium">₹{row.original?.currentMonthBalance?.toFixed(2)}</span> },
+
+            {
+                accessorKey: "paidAmount",
+                header: "Paid",
+                cell: ({ row }) => (
+                    <span className="text-green-600 font-medium">
+                        ₹{row.original.paidAmount.toFixed(2)}
+                    </span>
+                ),
+            },
+
+            {
+                id: "balanceAmount",
+                accessorFn: (row) => row.currentMonthBalance,
+                header: "Balance",
+                cell: ({ row }) => (
+                    <span className="text-red-600 font-medium">
+                        ₹{row.original.currentMonthBalance.toFixed(2)}
+                    </span>
+                ),
+            },
+
             {
                 id: "status",
+                accessorFn: (row) => {
+                    const paid = row.paidAmount;
+                    const balance = row.currentMonthBalance;
+
+                    if (balance === 0) {
+                        return "PAID";
+                    }
+
+                    if (paid > 0) {
+                        return "PARTIAL";
+                    }
+
+                    return "PENDING";
+                },
                 header: "Status",
                 cell: ({ row }) => {
                     const paid = row.original.paidAmount;
                     const balance = row.original.currentMonthBalance;
+
                     let status = "PENDING";
                     let css = "bg-red-100 text-red-700";
+
                     if (balance === 0) {
                         status = "PAID";
                         css = "bg-green-100 text-green-700";
@@ -90,12 +168,21 @@ export default function BillingList() {
                         status = "PARTIAL";
                         css = "bg-yellow-100 text-yellow-700";
                     }
-                    return <span className={`px-3 py-1 rounded-full text-xs font-medium ${css}`}>{status}</span>;
+
+                    return (
+                        <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${css}`}
+                        >
+                            {status}
+                        </span>
+                    );
                 },
             },
+
             {
                 id: "actions",
                 header: "Actions",
+                enableSorting: false,
                 cell: ({ row }) => (
                     <button
                         onClick={() =>
@@ -184,7 +271,7 @@ export default function BillingList() {
                     columns={columns}
                     pageSize={10}
                     pinnedColumns={pinnedColumns}
-                    loading={isLoading}                   
+                    loading={isLoading}
                     emptyMessage="No billing records found."
                 />
             </div>
