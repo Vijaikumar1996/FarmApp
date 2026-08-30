@@ -28,10 +28,15 @@ export default function AdjustmentForm({
 
     const adjustmentType = watch("adjustmentType");
 
-    const balanceAfterAdjustment =
+    // CREDIT reduces outstanding
+    // DEBIT increases outstanding
+    const adjustmentAmount =
         adjustmentType === "CREDIT"
-            ? summary.totalOutstanding - amount
-            : summary.totalOutstanding + amount;
+            ? amount
+            : -amount;
+
+    const balanceAfterAdjustment =
+        summary.totalOutstanding - adjustmentAmount;
 
     return (
 
@@ -39,7 +44,7 @@ export default function AdjustmentForm({
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-6"
         >
-                     
+
             {/* Adjustment */}
 
             <FormGrid cols={2}>
@@ -98,60 +103,58 @@ export default function AdjustmentForm({
             <div className="rounded-xl bg-yellow-50 border border-yellow-200 p-4">
 
                 <h3 className="font-semibold mb-4">
-
                     Adjustment Preview
-
                 </h3>
 
                 <FormGrid cols={2}>
 
-                    <div>
+                    {/* Current Outstanding */}
 
-                        <label>Current Outstanding</label>
+                    <div>
+                        <label>
+                            Current Outstanding
+                        </label>
 
                         <p>
-
                             ₹{summary.totalOutstanding.toFixed(2)}
-
                         </p>
-
                     </div>
 
+                    {/* Adjustment */}
+
                     <div>
+                        <label>
+                            Adjustment
+                        </label>
 
-                        <label>Adjustment</label>
-
-                        <p>
-
-                            {adjustmentType}
-
-                            {" "}
-
-                            ₹{amount.toFixed(2)}
-
+                        <p
+                            className={
+                                adjustmentType === "CREDIT"
+                                    ? "text-green-600 font-semibold"
+                                    : "text-red-600 font-semibold"
+                            }
+                        >
+                            {adjustmentType} ₹{amount.toFixed(2)}
                         </p>
-
                     </div>
 
-                    <div>
+                    {/* Balance After Adjustment */}
 
+                    <div>
                         <label className="font-semibold">
-
                             Balance After Adjustment
-
                         </label>
 
                         <p className="text-red-600 font-bold">
-
                             ₹{balanceAfterAdjustment.toFixed(2)}
-
                         </p>
-
                     </div>
 
                 </FormGrid>
 
             </div>
+
+            {/* Actions */}
 
             <div className="flex justify-end gap-3">
 
@@ -165,9 +168,7 @@ export default function AdjustmentForm({
                         py-2.5
                     "
                 >
-
                     Cancel
-
                 </button>
 
                 <button
@@ -181,11 +182,9 @@ export default function AdjustmentForm({
                         py-2.5
                     "
                 >
-
                     {isLoading
                         ? "Saving..."
                         : "Save Adjustment"}
-
                 </button>
 
             </div>
@@ -193,5 +192,4 @@ export default function AdjustmentForm({
         </form>
 
     );
-
 }

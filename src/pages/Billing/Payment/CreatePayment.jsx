@@ -61,7 +61,7 @@ export default function CreatePayment({
 
                     paymentDate: new Date(),
 
-                    paymentMode: "CASH",
+                    paymentMode: "UPI",
 
                     amount: summary.totalOutstanding,
 

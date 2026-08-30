@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -17,10 +17,18 @@ import {
 
 export default function DeliveryBoyTab() {
 
+  // ============================================
+  // Default delivery date = tomorrow
+  // ============================================
+
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   const defaultDate = tomorrow.toISOString().split("T")[0];
+
+  // ============================================
+  // Form
+  // ============================================
 
   const { control } = useForm({
     defaultValues: {
@@ -39,6 +47,10 @@ export default function DeliveryBoyTab() {
     name: "areaId"
   });
 
+  // ============================================
+  // Search filters
+  // ============================================
+
   const [filters, setFilters] = useState({
     deliveryDate: null,
     areaId: null
@@ -53,6 +65,10 @@ export default function DeliveryBoyTab() {
 
   };
 
+  // ============================================
+  // Delivery data
+  // ============================================
+
   const {
     data = [],
     isLoading
@@ -61,9 +77,17 @@ export default function DeliveryBoyTab() {
     filters.areaId
   );
 
+  // ============================================
+  // Areas
+  // ============================================
+
   const {
     data: areas = []
   } = useAreas();
+
+  // ============================================
+  // Export
+  // ============================================
 
   const exportMutation = useExportDeliveryBoySheet();
 
@@ -78,37 +102,43 @@ export default function DeliveryBoyTab() {
 
     try {
 
-      const response = await exportMutation.mutateAsync({
-
-        deliveryDate: filters.deliveryDate,
-
-        areaId: filters.areaId
-
-      });
+      const response =
+        await exportMutation.mutateAsync({
+          deliveryDate: filters.deliveryDate,
+          areaId: filters.areaId
+        });
 
       const blob = new Blob(
         [response.data],
         {
           type: response.headers["content-type"]
-        });
+        }
+      );
 
-      const url = window.URL.createObjectURL(blob);
+      const url =
+        window.URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
+      const link =
+        document.createElement("a");
 
       link.href = url;
 
       const disposition =
         response.headers["content-disposition"];
 
-      let fileName = "DeliveryBoySheet.xlsx";
+      let fileName =
+        "DeliveryBoySheet.xlsx";
 
       if (disposition) {
 
-        const match = disposition.match(/filename="?(.+?)"?$/);
+        const match =
+          disposition.match(
+            /filename="?(.+?)"?$/
+          );
 
-        if (match)
+        if (match) {
           fileName = match[1];
+        }
 
       }
 
@@ -122,48 +152,170 @@ export default function DeliveryBoyTab() {
 
       window.URL.revokeObjectURL(url);
 
-      toast.success("Excel downloaded successfully.");
+      toast.success(
+        "Excel downloaded successfully."
+      );
 
     }
     catch {
 
-      toast.error("Failed to download Excel.");
+      toast.error(
+        "Failed to download Excel."
+      );
 
     }
 
   };
+
+  // ============================================
+  // Flatten API response for DataTable
+  //
+  // API:
+  //
+  // DeliveryOrder
+  //   -> Houses
+  //       -> Customers
+  //
+  // DataTable:
+  //
+  // One row = one customer
+  // ============================================
+
+  const tableData = useMemo(() => {
+
+    if (!data?.length) {
+      return [];
+    }
+
+    return data.flatMap(deliveryOrder =>
+
+      (deliveryOrder.houses ?? []).flatMap(house =>
+
+        (house.customers ?? []).map(customer => ({
+
+          ...customer,
+
+          deliveryOrder:
+            deliveryOrder.deliveryOrder,
+
+          deliveryLocation:
+            deliveryOrder.deliveryLocation,
+
+          houseDoorNo:
+            house.houseDoorNo
+
+        }))
+
+      )
+
+    );
+
+  }, [data]);
+
+  // ============================================
+  // Columns
+  // ============================================
+
   const columns = [
+
+    // ==========================================
+    // Delivery Order
+    // ==========================================
+
+    {
+      accessorKey: "deliveryOrder",
+      header: "Order",
+
+      cell: ({ row }) => (
+
+        <span className="font-bold text-blue-700 whitespace-nowrap">
+
+          {row.original.deliveryOrder}
+
+        </span>
+
+      )
+    },
+
+    // ==========================================
+    // House No
+    // ==========================================
+
+    // {
+    //   accessorKey: "houseDoorNo",
+    //   header: "House No",
+
+    //   cell: ({ row }) => (
+
+    //     <span className="font-semibold text-gray-800 whitespace-nowrap">
+
+    //       {row.original.houseDoorNo || "-"}
+
+    //     </span>
+
+    //   )
+    // },
+
+    // ==========================================
+    // Area
+    // ==========================================
+
     {
       accessorKey: "areaCode",
       header: "Area",
 
       cell: ({ row }) => (
+
         <span className="font-semibold text-blue-700 whitespace-nowrap">
+
           {row.original.areaCode}
+
         </span>
+
       )
     },
+
+    // ==========================================
+    // Customer
+    // ==========================================
+
     {
       accessorKey: "customerName",
       header: "Customer",
 
       cell: ({ row }) => (
+
         <span className="font-medium text-gray-800 whitespace-nowrap">
+
           {row.original.customerName}
+
         </span>
+
       )
     },
+
+    // ==========================================
+    // Address
+    // ==========================================
 
     {
       accessorKey: "address",
       header: "Address",
 
       cell: ({ row }) => (
+
         <div className="max-w-md whitespace-normal">
+
           {row.original.address}
+
         </div>
+
       )
     },
+
+    // ==========================================
+    // Milk
+    // ==========================================
 
     {
       accessorKey: "milkProducts",
@@ -171,18 +323,26 @@ export default function DeliveryBoyTab() {
 
       cell: ({ row }) => {
 
-        if (!row.original.milkProducts.length)
+        const products =
+          row.original.milkProducts ?? [];
+
+        if (!products.length) {
           return "-";
+        }
 
         return (
 
           <div className="space-y-1">
 
-            {row.original.milkProducts.map(product => (
+            {products.map(product => (
 
-              <div key={product.productId}>
+              <div
+                key={product.productId}
+                className="whitespace-nowrap"
+              >
 
-                {product.quantity} {product.productCode}
+                {product.quantity}{" "}
+                {product.productCode}
 
               </div>
 
@@ -195,27 +355,36 @@ export default function DeliveryBoyTab() {
       }
     },
 
+    // ==========================================
+    // Other Products
+    // ==========================================
+
     {
       accessorKey: "otherProducts",
       header: "Other",
 
       cell: ({ row }) => {
 
-        if (!row.original.otherProducts.length)
+        const products =
+          row.original.otherProducts ?? [];
+
+        if (!products.length) {
           return "-";
+        }
 
         return (
 
           <div className="space-y-1">
 
-            {row.original.otherProducts.map(product => (
+            {products.map(product => (
 
               <div
                 key={product.productId}
-                className="font-medium text-green-700"
+                className="font-medium text-green-700 whitespace-nowrap"
               >
 
-                {product.quantity} {product.productCode}
+                {product.quantity}{" "}
+                {product.productCode}
 
               </div>
 
@@ -227,13 +396,20 @@ export default function DeliveryBoyTab() {
 
       }
     }
+
   ];
+
+  // ============================================
+  // UI
+  // ============================================
 
   return (
 
     <div className="space-y-5">
 
-      {/* Filters */}
+      {/* ========================================
+          Filters
+      ======================================== */}
 
       <div className="rounded-xl border border-gray-200 bg-white p-5">
 
@@ -254,14 +430,18 @@ export default function DeliveryBoyTab() {
                 id: "",
                 name: "All Areas"
               },
+
               ...areas.map(area => ({
                 id: area.id,
                 name: area.areaName
               }))
+
             ]}
           />
 
           <div className="flex items-end gap-2">
+
+            {/* Search */}
 
             <Button
               type="button"
@@ -270,12 +450,19 @@ export default function DeliveryBoyTab() {
               Search
             </Button>
 
+            {/* Export */}
+
             <Button
               type="button"
               onClick={handleExport}
-              disabled={!data.length || exportMutation.isPending}
+              disabled={
+                !data.length ||
+                exportMutation.isPending
+              }
             >
-              Export Excel
+              {exportMutation.isPending
+                ? "Exporting..."
+                : "Export Excel"}
             </Button>
 
           </div>
@@ -284,23 +471,16 @@ export default function DeliveryBoyTab() {
 
       </div>
 
+      {/* ========================================
+          Delivery Table
+      ======================================== */}
+
       <DataTable
-
-        data={data}
-
+        data={tableData}
         columns={columns}
-
         loading={isLoading}
-
         pageSize={20}
-     
-
         emptyMessage="No delivery records found."
-
-        // pinnedColumns={{
-        //   left: ["customerName"]
-        // }}
-
       />
 
     </div>

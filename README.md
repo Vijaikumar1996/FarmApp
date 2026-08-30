@@ -1,1 +1,1 @@
-Tuition Management APP
+Farm Management APP

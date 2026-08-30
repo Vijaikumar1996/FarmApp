@@ -2,65 +2,103 @@ export default function BillProductTable({
     products
 }) {
     const totalQuantity = products.reduce(
-        (sum, x) => sum + x.quantity,
+        (sum, x) => sum + (Number(x.quantity) || 0),
         0
     );
 
     const totalAmount = products.reduce(
-        (sum, x) => sum + x.amount,
+        (sum, x) => sum + (Number(x.amount) || 0),
         0
     );
 
     return (
-        <div className="">
-            <table className="w-full border-collapse">
+        <div className="w-full">
+
+            <table className="w-full table-fixed border-collapse text-base">
+
                 <thead>
-                    <tr className="bg-green-700 text-white">
-                        <th className="border px-2 py-1 text-left w-16">
+                    <tr>
+
+                        <th className="border px-2 py-2 text-left font-semibold text-black w-[8%]">
                             S.No
                         </th>
-                        <th className="border px-2 py-1 text-left">
+
+                        <th className="border px-2 py-2 text-left font-semibold text-black w-[38%]">
                             Product
                         </th>
-                        <th className="border px-2 py-1 text-left">
+
+                        <th className="border px-2 py-2 text-center font-semibold text-black w-[14%]">
                             Total Days
                         </th>
-                        <th className="border px-2 py-1 text-right">
+
+                        <th className="border px-2 py-2 text-right font-semibold text-black w-[10%]">
                             Quantity
                         </th>
-                        <th className="border px-2 py-1 text-right">
+
+                        <th className="border px-2 py-2 text-right font-semibold text-black w-[15%]">
                             Rate
                         </th>
-                        <th className="border px-2 py-1 text-right">
+
+                        <th className="border px-2 py-2 text-right font-semibold text-black w-[15%]">
                             Amount
                         </th>
+
                     </tr>
                 </thead>
+
                 <tbody>
+
                     {products.map((item, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                            <td className="border px-4 py-3">
+
+                        <tr
+                            key={index}
+                            className="leading-tight"
+                        >
+
+                            {/* S.No */}
+
+                            <td className="border px-2 py-2 text-black">
                                 {index + 1}
                             </td>
-                            <td className="border px-4 py-3">
+
+                            {/* Product */}
+
+                            <td className="border px-2 py-2 text-black break-words">
                                 {item.productName}
                             </td>
-                            <td className="border px-4 py-3">
+
+                            {/* Total Days */}
+
+                            <td className="border px-2 py-2 text-center text-black">
                                 {item.totalDays}
                             </td>
-                            <td className="border px-4 py-3 text-right">
+
+                            {/* Quantity */}
+
+                            <td className="border px-2 py-2 text-right text-black">
                                 {item.quantity}
                             </td>
-                            <td className="border px-4 py-3 text-right">
-                                ₹{item.unitPrice.toFixed(2)}
+
+                            {/* Rate */}
+
+                            <td className="border px-2 py-2 text-right text-black whitespace-nowrap">
+                                ₹{Number(item.unitPrice).toFixed(2)}
                             </td>
-                            <td className="border px-4 py-3 text-right font-medium">
-                                ₹{item.amount.toFixed(2)}
+
+                            {/* Amount */}
+
+                            <td className="border px-2 py-2 text-right text-black font-medium whitespace-nowrap">
+                                ₹{Number(item.amount).toFixed(2)}
                             </td>
+
                         </tr>
+
                     ))}
+
                 </tbody>
+
             </table>
+
         </div>
     );
 }

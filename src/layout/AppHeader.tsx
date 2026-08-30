@@ -59,9 +59,7 @@ const AppHeader: React.FC = () => {
 
           {/* Mobile Logo */}
           <Link to="/home" className="lg:hidden">
-            {/* <span className="text-xl font-bold text-gray-800 dark:text-white">
-              {user?.instituteName || "Tuition Center"}
-            </span> */}
+           
             <img src="/images/logo/logo_180.png" alt="Logo" />
           </Link>
 
@@ -77,8 +75,7 @@ const AppHeader: React.FC = () => {
         {/* 🔥 CENTER SECTION (NEW - HARD CODED NAME) */}
         {/* CENTER SECTION */}
         <div className="hidden lg:flex flex-1 justify-center items-center">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">
-            {/* {user?.InstituteName || "Tuition Center"} */}
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">            
             {AppConfig.companyName}
           </h2>
         </div>

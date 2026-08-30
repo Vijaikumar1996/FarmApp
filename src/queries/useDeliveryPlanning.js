@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    useMutation,
+    useQuery,
+    useQueryClient
+} from "@tanstack/react-query";
+
 import toast from "react-hot-toast";
 
 import {
@@ -7,15 +12,21 @@ import {
     getDriverLoading,
     getDeliveryBoySheet,
     getGenerationStatus,
-    exportDeliveryBoySheet
+    exportDeliveryBoySheet,
+    getExpectedDeliveries,
+    pauseExpectedDelivery
 } from "../services/deliveryPlanningService";
+
 
 const FARM_SUMMARY = "farm-summary";
 const DRIVER_LOADING = "driver-loading";
 const DELIVERY_BOY = "delivery-boy";
+const EXPECTED_DELIVERIES = "expected-deliveries";
+
 
 
 export function useDeliveryGenerationStatus(deliveryDate) {
+
     return useQuery({
         queryKey: [
             "delivery-generation-status",
@@ -27,38 +38,66 @@ export function useDeliveryGenerationStatus(deliveryDate) {
 
         enabled: !!deliveryDate
     });
+
 }
 
+
 export function useGenerateDelivery() {
+
     const queryClient = useQueryClient();
 
     return useMutation({
+
         mutationFn: generateDelivery,
 
         onSuccess: (_, variables) => {
+
             queryClient.invalidateQueries({
-                queryKey: [FARM_SUMMARY, variables.deliveryDate],
+                queryKey: [
+                    FARM_SUMMARY,
+                    variables.deliveryDate
+                ],
             });
 
             queryClient.invalidateQueries({
-                queryKey: [DRIVER_LOADING, variables.deliveryDate],
+                queryKey: [
+                    DRIVER_LOADING,
+                    variables.deliveryDate
+                ],
             });
 
             queryClient.invalidateQueries({
-                queryKey: [DELIVERY_BOY, variables.deliveryDate],
+                queryKey: [
+                    DELIVERY_BOY,
+                    variables.deliveryDate
+                ],
             });
 
-            toast.success("Delivery generated successfully.");
+            queryClient.invalidateQueries({
+                queryKey: [
+                    EXPECTED_DELIVERIES,
+                    variables.deliveryDate
+                ]
+            });
+
+            toast.success(
+                "Delivery generated successfully."
+            );
         },
 
         onError: (error) => {
+
             toast.error(
                 error?.response?.data?.message ||
                 "Failed to generate delivery."
             );
+
         },
+
     });
+
 }
+
 
 export function useFarmSummary(
     deliveryDate,
@@ -68,7 +107,7 @@ export function useFarmSummary(
     return useQuery({
 
         queryKey: [
-            "farm-summary",
+            FARM_SUMMARY,
             deliveryDate,
             categoryId
         ],
@@ -85,27 +124,62 @@ export function useFarmSummary(
 
 }
 
-export function useDriverLoading(deliveryDate) {
+
+export function useDriverLoading(
+    deliveryDate
+) {
+
     return useQuery({
-        queryKey: [DRIVER_LOADING, deliveryDate],
-        queryFn: () => getDriverLoading(deliveryDate),
+
+        queryKey: [
+            DRIVER_LOADING,
+            deliveryDate
+        ],
+
+        queryFn: () =>
+            getDriverLoading(deliveryDate),
+
         enabled: !!deliveryDate,
+
     });
+
 }
 
-export function useDeliveryBoySheet(deliveryDate, areaId) {
+
+export function useDeliveryBoySheet(
+    deliveryDate,
+    areaId
+) {
+
     return useQuery({
-        queryKey: [DELIVERY_BOY, deliveryDate, areaId],
-        queryFn: () => getDeliveryBoySheet(deliveryDate, areaId),
+
+        queryKey: [
+            DELIVERY_BOY,
+            deliveryDate,
+            areaId
+        ],
+
+        queryFn: () =>
+            getDeliveryBoySheet(
+                deliveryDate,
+                areaId
+            ),
+
         enabled: !!deliveryDate,
+
     });
+
 }
+
 
 export function useExportDeliveryBoySheet() {
 
     return useMutation({
 
-        mutationFn: ({ deliveryDate, areaId }) =>
+        mutationFn: ({
+            deliveryDate,
+            areaId
+        }) =>
             exportDeliveryBoySheet(
                 deliveryDate,
                 areaId
@@ -113,7 +187,9 @@ export function useExportDeliveryBoySheet() {
 
         onSuccess: () => {
 
-            toast.success("Delivery boy sheet exported successfully.");
+            toast.success(
+                "Delivery boy sheet exported successfully."
+            );
 
         },
 
@@ -128,4 +204,131 @@ export function useExportDeliveryBoySheet() {
 
     });
 
+}
+
+
+// ============================================================
+// EXPECTED DELIVERIES
+// ============================================================
+
+export function useExpectedDeliveries(
+    deliveryDate,
+    source,
+    productId
+) {
+
+    return useQuery({
+
+        queryKey: [
+            EXPECTED_DELIVERIES,
+            deliveryDate,
+            source,
+            productId
+        ],
+
+        queryFn: () =>
+            getExpectedDeliveries(
+                deliveryDate,
+                source,
+                productId
+            ),
+
+        enabled:
+            !!deliveryDate &&
+            !!source &&
+            !!productId
+
+    });
+
+}
+
+
+// ============================================================
+// PAUSE EXPECTED DELIVERY
+// ============================================================
+
+export function useHoldExpectedDelivery() {
+
+    const queryClient = useQueryClient();
+
+    return useMutation({
+
+        mutationFn: ({
+            subscriptionId,
+            deliveryDate,
+            productId,
+            quantity
+        }) =>
+            holdExpectedDelivery(
+                subscriptionId,
+                deliveryDate,
+                productId,
+                quantity
+            ),
+
+        onSuccess: (_, variables) => {
+
+            queryClient.invalidateQueries({
+                queryKey: [
+                    EXPECTED_DELIVERIES,
+                    variables.deliveryDate
+                ]
+            });
+
+            toast.success(
+                "Delivery put on hold successfully."
+            );
+        },
+
+        onError: (error) => {
+
+            toast.error(
+                error?.response?.data?.message ||
+                "Failed to hold delivery."
+            );
+        }
+
+    });
+}
+
+export function useHoldAllExpectedDeliveries() {
+
+    const queryClient = useQueryClient();
+
+    return useMutation({
+
+        mutationFn: ({
+            deliveryDate,
+            productId,
+            source
+        }) =>
+            holdAllExpectedDeliveries(
+                deliveryDate,
+                productId,
+                source
+            ),
+
+        onSuccess: (_, variables) => {
+
+            queryClient.invalidateQueries({
+                queryKey: [
+                    EXPECTED_DELIVERIES,
+                    variables.deliveryDate
+                ]
+            });
+
+            toast.success(
+                "All expected deliveries have been put on hold."
+            );
+        },
+
+        onError: (error) => {
+
+            toast.error(
+                error?.response?.data?.message ||
+                "Failed to hold all deliveries."
+            );
+        }
+
+    });
 }
