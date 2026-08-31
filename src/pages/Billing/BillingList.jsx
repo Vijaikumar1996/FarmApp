@@ -90,9 +90,28 @@ export default function BillingList() {
             {
                 accessorKey: "adjustmentAmount",
                 header: "Adjustment",
-                cell: ({ row }) => (
-                    <span>₹{row.original.adjustmentAmount.toFixed(2)}</span>
-                ),
+                cell: ({ row }) => {
+                    const amount = Number(row.original.adjustmentAmount || 0);
+
+                    if (amount === 0) {
+                        return <span>—</span>;
+                    }
+
+                    const isCredit = amount > 0;
+
+                    return (
+                        <span
+                            className={
+                                isCredit
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                            }
+                        >
+                            {isCredit ? "Credit" : "Debit"} ₹
+                            {Math.abs(amount).toFixed(2)}
+                        </span>
+                    );
+                },
             },
 
             {
@@ -105,7 +124,7 @@ export default function BillingList() {
                 cell: ({ row }) => {
                     const total =
                         row.original.productAmount +
-                        row.original.deliveryCharge +
+                        row.original.deliveryCharge -
                         row.original.adjustmentAmount;
 
                     return (
