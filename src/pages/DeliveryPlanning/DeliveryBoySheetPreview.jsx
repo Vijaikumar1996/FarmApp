@@ -1650,7 +1650,7 @@ export default function DeliveryBoySheetPreview({
 
                                                                 <td
                                                                     colSpan={2}
-                                                                    className="border px-2 py-2 whitespace-pre-wrap"
+                                                                    className="border text-2xl px-2 py-2 whitespace-pre-wrap"
                                                                 >
                                                                     {group.deliveryTotal.value}
                                                                 </td>
