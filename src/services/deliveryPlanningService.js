@@ -68,6 +68,10 @@ export const getDriverLoading = async (
 };
 
 
+// ============================================================
+// DELIVERY BOY SHEET
+// ============================================================
+
 export const getDeliveryBoySheet = async (
     deliveryDate,
     areaId
@@ -86,6 +90,33 @@ export const getDeliveryBoySheet = async (
     return response.data;
 };
 
+
+// ============================================================
+// DELIVERY BOY SHEET PREVIEW
+// ============================================================
+
+export const getDeliveryBoySheetPreview = async (
+    deliveryDate,
+    areaId
+) => {
+
+    const response = await apiClient.get(
+        `${BASE_URL}/delivery-boy-sheet/preview`,
+        {
+            params: {
+                deliveryDate,
+                areaId: areaId || null
+            }
+        }
+    );
+
+    return response.data;
+};
+
+
+// ============================================================
+// EXPORT DELIVERY BOY SHEET
+// ============================================================
 
 export const exportDeliveryBoySheet = async (
     deliveryDate,
@@ -155,6 +186,11 @@ export const pauseExpectedDelivery = async (
     return response.data;
 };
 
+
+// ============================================================
+// HOLD EXPECTED DELIVERY
+// ============================================================
+
 export const holdExpectedDelivery = async (
     subscriptionId,
     deliveryDate,
@@ -173,6 +209,11 @@ export const holdExpectedDelivery = async (
 
     return response.data;
 };
+
+
+// ============================================================
+// HOLD ALL EXPECTED DELIVERIES
+// ============================================================
 
 export const holdAllExpectedDeliveries = async (
     deliveryDate,

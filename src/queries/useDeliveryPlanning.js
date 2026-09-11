@@ -11,30 +11,42 @@ import {
     getFarmSummary,
     getDriverLoading,
     getDeliveryBoySheet,
+    getDeliveryBoySheetPreview,
     getGenerationStatus,
     exportDeliveryBoySheet,
     getExpectedDeliveries,
-    pauseExpectedDelivery
+    pauseExpectedDelivery,
+    holdExpectedDelivery,
+    holdAllExpectedDeliveries
 } from "../services/deliveryPlanningService";
 
 
 const FARM_SUMMARY = "farm-summary";
 const DRIVER_LOADING = "driver-loading";
 const DELIVERY_BOY = "delivery-boy";
+const DELIVERY_BOY_PREVIEW = "delivery-boy-preview";
 const EXPECTED_DELIVERIES = "expected-deliveries";
 
 
+// ============================================================
+// DELIVERY GENERATION STATUS
+// ============================================================
 
-export function useDeliveryGenerationStatus(deliveryDate) {
+export function useDeliveryGenerationStatus(
+    deliveryDate
+) {
 
     return useQuery({
+
         queryKey: [
             "delivery-generation-status",
             deliveryDate
         ],
 
         queryFn: () =>
-            getGenerationStatus(deliveryDate),
+            getGenerationStatus(
+                deliveryDate
+            ),
 
         enabled: !!deliveryDate
     });
@@ -42,13 +54,19 @@ export function useDeliveryGenerationStatus(deliveryDate) {
 }
 
 
+// ============================================================
+// GENERATE DELIVERY
+// ============================================================
+
 export function useGenerateDelivery() {
 
-    const queryClient = useQueryClient();
+    const queryClient =
+        useQueryClient();
 
     return useMutation({
 
-        mutationFn: generateDelivery,
+        mutationFn:
+            generateDelivery,
 
         onSuccess: (_, variables) => {
 
@@ -71,6 +89,13 @@ export function useGenerateDelivery() {
                     DELIVERY_BOY,
                     variables.deliveryDate
                 ],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: [
+                    DELIVERY_BOY_PREVIEW,
+                    variables.deliveryDate
+                ]
             });
 
             queryClient.invalidateQueries({
@@ -99,6 +124,10 @@ export function useGenerateDelivery() {
 }
 
 
+// ============================================================
+// FARM SUMMARY
+// ============================================================
+
 export function useFarmSummary(
     deliveryDate,
     categoryId
@@ -118,12 +147,17 @@ export function useFarmSummary(
                 categoryId
             ),
 
-        enabled: !!deliveryDate
+        enabled:
+            !!deliveryDate
 
     });
 
 }
 
+
+// ============================================================
+// DRIVER LOADING
+// ============================================================
 
 export function useDriverLoading(
     deliveryDate
@@ -137,14 +171,21 @@ export function useDriverLoading(
         ],
 
         queryFn: () =>
-            getDriverLoading(deliveryDate),
+            getDriverLoading(
+                deliveryDate
+            ),
 
-        enabled: !!deliveryDate,
+        enabled:
+            !!deliveryDate,
 
     });
 
 }
 
+
+// ============================================================
+// DELIVERY BOY SHEET
+// ============================================================
 
 export function useDeliveryBoySheet(
     deliveryDate,
@@ -165,12 +206,52 @@ export function useDeliveryBoySheet(
                 areaId
             ),
 
-        enabled: !!deliveryDate,
+        enabled:
+            !!deliveryDate,
 
     });
 
 }
 
+
+// ============================================================
+// DELIVERY BOY SHEET PREVIEW
+// ============================================================
+
+export function useDeliveryBoySheetPreview(
+    deliveryDate,
+    areaId,
+    enabled = true
+) {
+
+    return useQuery({
+
+        queryKey: [
+            DELIVERY_BOY_PREVIEW,
+            deliveryDate,
+            areaId
+        ],
+
+        queryFn: () =>
+            getDeliveryBoySheetPreview(
+                deliveryDate,
+                areaId
+            ),
+
+        enabled:
+            enabled &&
+            !!deliveryDate,
+
+        staleTime: 0,
+
+    });
+
+}
+
+
+// ============================================================
+// EXPORT DELIVERY BOY SHEET
+// ============================================================
 
 export function useExportDeliveryBoySheet() {
 
@@ -247,9 +328,57 @@ export function useExpectedDeliveries(
 // PAUSE EXPECTED DELIVERY
 // ============================================================
 
+export function usePauseExpectedDelivery() {
+
+    const queryClient =
+        useQueryClient();
+
+    return useMutation({
+
+        mutationFn: ({
+            subscriptionId,
+            deliveryDate
+        }) =>
+            pauseExpectedDelivery(
+                subscriptionId,
+                deliveryDate
+            ),
+
+        onSuccess: (_, variables) => {
+
+            queryClient.invalidateQueries({
+                queryKey: [
+                    EXPECTED_DELIVERIES,
+                    variables.deliveryDate
+                ]
+            });
+
+            toast.success(
+                "Delivery paused successfully."
+            );
+        },
+
+        onError: (error) => {
+
+            toast.error(
+                error?.response?.data?.message ||
+                "Failed to pause delivery."
+            );
+        }
+
+    });
+
+}
+
+
+// ============================================================
+// HOLD EXPECTED DELIVERY
+// ============================================================
+
 export function useHoldExpectedDelivery() {
 
-    const queryClient = useQueryClient();
+    const queryClient =
+        useQueryClient();
 
     return useMutation({
 
@@ -289,11 +418,18 @@ export function useHoldExpectedDelivery() {
         }
 
     });
+
 }
+
+
+// ============================================================
+// HOLD ALL EXPECTED DELIVERIES
+// ============================================================
 
 export function useHoldAllExpectedDeliveries() {
 
-    const queryClient = useQueryClient();
+    const queryClient =
+        useQueryClient();
 
     return useMutation({
 
@@ -331,4 +467,5 @@ export function useHoldAllExpectedDeliveries() {
         }
 
     });
+
 }

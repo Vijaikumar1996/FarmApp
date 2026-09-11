@@ -293,63 +293,45 @@ export default function ExpectedDeliveriesTab() {
             },
 
 
-            {
-                id: "action",
-                header: "Action",
+            // {
+            //     id: "action",
+            //     header: "Action",
 
-                cell: ({ row }) => {
+            //     cell: ({ row }) => {
 
-                    const item =
-                        row.original;
+            //         const item =
+            //             row.original;
 
+            //         if (!item.subscriptionId) {
 
-                    // Non-subscription requests
-                    // cannot be held using
-                    // subscriptionId.
+            //             return (
 
-                    if (!item.subscriptionId) {
+            //                 <span className="text-xs text-gray-400">
+            //                     —
+            //                 </span>
 
-                        return (
-
-                            <span className="text-xs text-gray-400">
-                                —
-                            </span>
-
-                        );
-                    }
+            //             );
+            //         }
 
 
-                    return (
+            //         return (
 
 
-                        <button
-                            type="button"
-                            disabled={
-                                holdMutation.isPending ||
-                                holdAllMutation.isPending
-                            }
-                            onClick={() => handleHold(item)}
-                            className="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            Hold
-                        </button>
-                        // <Button
-                        //     type="button"
-                        //     variant="outline"
-                        //     disabled={
-                        //         holdMutation.isPending ||
-                        //         holdAllMutation.isPending
-                        //     }
-                        //     onClick={() =>
-                        //         handleHold(item)
-                        //     }
-                        // >
-                        //     Hold Delivery
-                        // </Button>
-
-                    );
-                },
-            },
+            //             <button
+            //                 type="button"
+            //                 disabled={
+            //                     holdMutation.isPending ||
+            //                     holdAllMutation.isPending
+            //                 }
+            //                 onClick={() => handleHold(item)}
+            //                 className="text-sm font-medium text-orange-600 hover:text-orange-700 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+            //             >
+            //                 Hold
+            //             </button>
+                       
+            //         );
+            //     },
+            // },
 
         ],
         [
@@ -461,7 +443,7 @@ export default function ExpectedDeliveriesTab() {
                     </div>
 
 
-                    <div className="flex items-center justify-end rounded-xl border border-gray-200 bg-white p-5">
+                    {/* <div className="flex items-center justify-end rounded-xl border border-gray-200 bg-white p-5">
 
                         <Button
                             type="button"
@@ -478,7 +460,7 @@ export default function ExpectedDeliveriesTab() {
                                 : "Hold All"}
                         </Button>
 
-                    </div>
+                    </div> */}
 
                 </div>
 

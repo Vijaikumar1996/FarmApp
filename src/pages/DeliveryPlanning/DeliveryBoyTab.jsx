@@ -10,10 +10,13 @@ import DateField from "../../components/form/form-input/DateField";
 import SelectField from "../../components/form/form-input/SelectField";
 
 import { useAreas } from "../../queries/useArea";
+
 import {
   useDeliveryBoySheet,
   useExportDeliveryBoySheet
 } from "../../queries/useDeliveryPlanning";
+
+import DeliveryBoySheetPreview from "./DeliveryBoySheetPreview";
 
 export default function DeliveryBoyTab() {
 
@@ -63,7 +66,15 @@ export default function DeliveryBoyTab() {
       areaId: areaId || null
     });
 
+    // Close preview if it is already open
+    setShowPreview(false);
   };
+
+  // ============================================
+  // Preview state
+  // ============================================
+
+  const [showPreview, setShowPreview] = useState(false);
 
   // ============================================
   // Delivery data
@@ -76,6 +87,7 @@ export default function DeliveryBoyTab() {
     filters.deliveryDate,
     filters.areaId
   );
+
 
   // ============================================
   // Areas
@@ -168,6 +180,23 @@ export default function DeliveryBoyTab() {
   };
 
   // ============================================
+  // Open Preview
+  // ============================================
+
+  const handlePreview = () => {
+
+    if (!data.length) {
+
+      toast.error("No records available.");
+
+      return;
+    }
+
+    setShowPreview(true);
+
+  };
+
+  // ============================================
   // Flatten API response for DataTable
   //
   // API:
@@ -244,15 +273,15 @@ export default function DeliveryBoyTab() {
     // {
     //   accessorKey: "houseDoorNo",
     //   header: "House No",
-
+    //
     //   cell: ({ row }) => (
-
+    //
     //     <span className="font-semibold text-gray-800 whitespace-nowrap">
-
+    //
     //       {row.original.houseDoorNo || "-"}
-
+    //
     //     </span>
-
+    //
     //   )
     // },
 
@@ -415,11 +444,15 @@ export default function DeliveryBoyTab() {
 
         <FormGrid cols={4} gap={4}>
 
+          {/* Delivery Date */}
+
           <DateField
             control={control}
             name="deliveryDate"
             label="Delivery Date"
           />
+
+          {/* Area */}
 
           <SelectField
             control={control}
@@ -439,6 +472,8 @@ export default function DeliveryBoyTab() {
             ]}
           />
 
+          {/* Buttons */}
+
           <div className="flex items-end gap-2">
 
             {/* Search */}
@@ -450,11 +485,22 @@ export default function DeliveryBoyTab() {
               Search
             </Button>
 
+            {/* Preview */}
+
+            <Button
+              type="button"
+              onClick={handlePreview}
+              disabled={!data.length}
+            >
+              Preview
+            </Button>
+
             {/* Export */}
 
             <Button
               type="button"
               onClick={handleExport}
+              className="whitespace-nowrap"
               disabled={
                 !data.length ||
                 exportMutation.isPending
@@ -482,6 +528,20 @@ export default function DeliveryBoyTab() {
         pageSize={20}
         emptyMessage="No delivery records found."
       />
+
+      {/* ========================================
+          Preview
+      ======================================== */}
+
+      {showPreview && (
+
+        <DeliveryBoySheetPreview
+          deliveryDate={filters.deliveryDate}
+          areaId={filters.areaId}
+          onClose={() => setShowPreview(false)}
+        />
+
+      )}
 
     </div>
 

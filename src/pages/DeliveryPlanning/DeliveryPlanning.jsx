@@ -8,10 +8,10 @@ import DeliveryBoyTab from "./DeliveryBoyTab";
 import ExpectedDeliveriesTab from "./ExpectedDeliveryTab";
 
 const tabs = [
-  // {
-  //   id: "expectedDeliveries",
-  //   label: "Expected Deliveries",
-  // },
+  {
+    id: "expectedDeliveries",
+    label: "Expected Deliveries",
+  },
   {
     id: "generate",
     label: "Generate Delivery",
@@ -31,7 +31,7 @@ const tabs = [
 ];
 
 export default function DeliveryPlanning() {
-  const [activeTab, setActiveTab] = useState("generate"); //expectedDeliveries
+  const [activeTab, setActiveTab] = useState("expectedDeliveries"); //expectedDeliveries
 
   return (
     <div className="space-y-6">
