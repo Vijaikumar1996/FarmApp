@@ -1167,9 +1167,9 @@ export default function DeliveryBoySheetPreview({
 
     return (
 
-        <div className="fixed inset-0 z-1000 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-1000 bg-black/50 flex items-center justify-center">
 
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[1500px] h-[95vh] flex flex-col">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[1500px] h-[99vh] flex flex-col">
 
 
                 {/* ================================================= */}
@@ -1683,6 +1683,24 @@ export default function DeliveryBoySheetPreview({
                                                                     </div>
                                                                 </td>
 
+                                                            </tr>
+
+                                                        )}
+
+                                                    {/* ================================= */}
+                                                    {/* Space After Location */}
+                                                    {/* ================================= */}
+
+                                                    {activeArea.showSpaceAfterLocation &&
+                                                        groupIndex < activeArea.groups.length - 1 && (
+
+                                                            <tr>
+                                                                <td
+                                                                    colSpan={5}
+                                                                    className="border-0 h-4"
+                                                                >
+                                                                    &nbsp;
+                                                                </td>
                                                             </tr>
 
                                                         )}
