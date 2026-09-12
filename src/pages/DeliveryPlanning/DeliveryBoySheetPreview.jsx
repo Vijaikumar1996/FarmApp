@@ -1502,7 +1502,7 @@ export default function DeliveryBoySheetPreview({
 
                                                                 {/* Address */}
 
-                                                                <td className="border px-2 py-2 align-top whitespace-pre-wrap">
+                                                                <td className="border text-2xl px-2 py-2 align-top whitespace-pre-wrap">
 
                                                                     {
                                                                         row.address ||
