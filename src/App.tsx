@@ -36,6 +36,7 @@ import CustomerRequestView from "./pages/Orders/CustomerRequestView";
 import BillingList from "./pages/Billing/BillingList";
 import BillingDetails from "./pages/Billing/BillingDetails";
 import SummaryBill from "./pages/Billing/BillCopy/SummaryBill";
+import BulkBills from "./pages/Billing/BulkBill";
 
 export default function App() {
   const isFetching = useIsFetching();
@@ -125,6 +126,11 @@ export default function App() {
               <Route
                 path="/payments/bill/:billingId"
                 element={<CustomerLedger />}
+              />
+
+              <Route
+                path="/bulk-bills"
+                element={<BulkBills />}
               />
 
               <Route
