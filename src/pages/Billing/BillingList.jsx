@@ -204,14 +204,15 @@ export default function BillingList() {
                 enableSorting: false,
                 cell: ({ row }) => (
                     <button
-                        onClick={() =>
-                            navigate("/billing/details", {
-                                state: {
-                                    customerId: row.original.customerId,
-                                    billingMonth: row.original.billingMonth,
-                                },
-                            })
-                        }
+                        onClick={() => {
+                            const { customerId, billingMonth } = row.original;
+
+                            const url =
+                                `/billing/details?customerId=${encodeURIComponent(customerId)}` +
+                                `&billingMonth=${encodeURIComponent(billingMonth)}`;
+
+                            window.open(url, "_blank", "noopener,noreferrer");
+                        }}
                         className="text-blue-600 hover:underline font-medium"
                     >
                         View Bill

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 import DataTable from "../../components/common/DataTable";
 // import PaymentDialog from "./PaymentDialog";
@@ -11,14 +11,20 @@ import CommonDrawer from "../../components/common/CommonDrawer";
 
 export default function BillingDetails() {
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const { customerId, billingMonth } = location.state;
+    const [searchParams] = useSearchParams();
+
+    const customerId = searchParams.get("customerId");
+    const billingMonth = searchParams.get("billingMonth");
 
     console.log("Customerid ", customerId);
     console.log("billingMonth ", billingMonth);
 
-    const { data, isLoading, refetch } = useBillingDetails(customerId, billingMonth);
+    const { data, isLoading, refetch } = useBillingDetails(
+        customerId,
+        billingMonth
+    );
+
     const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
     const [showAdjustmentDrawer, setShowAdjustmentDrawer] = useState(false);
 
@@ -39,13 +45,17 @@ export default function BillingDetails() {
             // {
             //     accessorKey: "unitPrice",
             //     header: "Rate",
-            //     cell: ({ row }) => <>₹{row.original.unitPrice.toFixed(2)}</>,
+            //     cell: ({ row }) => (
+            //         <>₹{row.original.unitPrice.toFixed(2)}</>
+            //     ),
             // },
             {
                 accessorKey: "amount",
                 header: "Amount",
                 cell: ({ row }) => (
-                    <span className="font-semibold">₹{row.original.amount.toFixed(2)}</span>
+                    <span className="font-semibold">
+                        ₹{row.original.amount.toFixed(2)}
+                    </span>
                 ),
             },
         ],
@@ -66,7 +76,9 @@ export default function BillingDetails() {
                 accessorKey: "amount",
                 header: "Amount",
                 cell: ({ row }) => (
-                    <span className="text-green-600 font-medium">₹{row.original.amount.toFixed(2)}</span>
+                    <span className="text-green-600 font-medium">
+                        ₹{row.original.amount.toFixed(2)}
+                    </span>
                 ),
             },
             {
@@ -91,8 +103,16 @@ export default function BillingDetails() {
                 accessorKey: "amount",
                 header: "Amount",
                 cell: ({ row }) => {
-                    const css = row.original.amount >= 0 ? "text-green-600" : "text-red-600";
-                    return <span className={css}>₹{row.original.amount.toFixed(2)}</span>;
+                    const css =
+                        row.original.amount >= 0
+                            ? "text-green-600"
+                            : "text-red-600";
+
+                    return (
+                        <span className={css}>
+                            ₹{row.original.amount.toFixed(2)}
+                        </span>
+                    );
                 },
             },
             {
@@ -113,23 +133,34 @@ export default function BillingDetails() {
 
     const customer = data.customer;
     console.log("data", data);
+
     const summary = data.summary;
 
     return (
         <div className="space-y-6">
+            {/* Header */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-semibold">Customer Bill</h1>
-                    <p className="text-gray-500 mt-1">Billing Details</p>
+                    <h1 className="text-2xl font-semibold">
+                        Customer Bill
+                    </h1>
+
+                    <p className="text-gray-500 mt-1">
+                        Billing Details
+                    </p>
                 </div>
-                <button onClick={() => navigate(-1)} className="border rounded-xl px-4 py-2">
+
+                <button
+                    onClick={() => navigate(-1)}
+                    className="border rounded-xl px-4 py-2"
+                >
                     Back
                 </button>
             </div>
 
+            {/* Customer Details */}
             <div className="bg-white border rounded-2xl px-5 py-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
                     {/* Customer Details */}
                     <div className="min-w-0">
                         <div className="flex items-center gap-2">
@@ -160,25 +191,50 @@ export default function BillingDetails() {
                 </div>
             </div>
 
+            {/* Summary */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Previous Outstanding</p>
-                    <h2 className="text-2xl font-bold mt-2">₹{summary.previousOutstanding.toFixed(2)}</h2>
+                    <p className="text-sm text-gray-500">
+                        Previous Outstanding
+                    </p>
+
+                    <h2 className="text-2xl font-bold mt-2">
+                        ₹{summary.previousOutstanding.toFixed(2)}
+                    </h2>
                 </div>
+
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Current Charges</p>
-                    <h2 className="text-2xl font-bold mt-2">₹{summary.currentCharges.toFixed(2)}</h2>
+                    <p className="text-sm text-gray-500">
+                        Current Charges
+                    </p>
+
+                    <h2 className="text-2xl font-bold mt-2">
+                        ₹{summary.currentCharges.toFixed(2)}
+                    </h2>
                 </div>
+
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Paid</p>
-                    <h2 className="text-2xl font-bold mt-2 text-green-600">₹{summary.paidAmount.toFixed(2)}</h2>
+                    <p className="text-sm text-gray-500">
+                        Paid
+                    </p>
+
+                    <h2 className="text-2xl font-bold mt-2 text-green-600">
+                        ₹{summary.paidAmount.toFixed(2)}
+                    </h2>
                 </div>
+
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Outstanding</p>
-                    <h2 className="text-2xl font-bold mt-2 text-red-600">₹{summary.totalOutstanding.toFixed(2)}</h2>
+                    <p className="text-sm text-gray-500">
+                        Outstanding
+                    </p>
+
+                    <h2 className="text-2xl font-bold mt-2 text-red-600">
+                        ₹{summary.totalOutstanding.toFixed(2)}
+                    </h2>
                 </div>
             </div>
 
+            {/* Actions */}
             <div className="flex gap-3">
                 <button
                     disabled={summary.totalOutstanding <= 0}
@@ -187,6 +243,7 @@ export default function BillingDetails() {
                 >
                     Receive Payment
                 </button>
+
                 <button
                     disabled={summary.totalOutstanding <= 0}
                     onClick={() => setShowAdjustmentDrawer(true)}
@@ -194,11 +251,17 @@ export default function BillingDetails() {
                 >
                     Add Adjustment
                 </button>
+
                 <button
                     onClick={() =>
                         window.open(
-                            `/billing/summary-print?customerId=${customerId}&billingMonth=${billingMonth}`,
-                            "_blank"
+                            `/billing/summary-print?customerId=${encodeURIComponent(
+                                customerId
+                            )}&billingMonth=${encodeURIComponent(
+                                billingMonth
+                            )}`,
+                            "_blank",
+                            "noopener,noreferrer"
                         )
                     }
                     className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl transition-colors"
@@ -207,13 +270,21 @@ export default function BillingDetails() {
                 </button>
             </div>
 
+            {/* Fully Settled Message */}
             {summary.totalOutstanding <= 0 && (
                 <div className="flex items-center gap-4 rounded-xl border border-green-200 bg-green-50 p-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-2xl">✅</div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-2xl">
+                        ✅
+                    </div>
+
                     <div>
-                        <h3 className="font-semibold text-green-800">Bill Fully Settled</h3>
+                        <h3 className="font-semibold text-green-800">
+                            Bill Fully Settled
+                        </h3>
+
                         <p className="text-sm text-green-700 mt-1">
-                            This customer's bill has been paid in full. No further payment or adjustment is required.
+                            This customer's bill has been paid in full.
+                            No further payment or adjustment is required.
                         </p>
                     </div>
                 </div>
@@ -222,8 +293,11 @@ export default function BillingDetails() {
             {/* Delivered Products */}
             <div className="bg-white border rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">Delivered Products</h2>
+                    <h2 className="text-lg font-semibold">
+                        Delivered Products
+                    </h2>
                 </div>
+
                 <DataTable
                     data={data.deliveries}
                     columns={productColumns}
@@ -236,8 +310,11 @@ export default function BillingDetails() {
             {/* Payment History */}
             <div className="bg-white border rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">Payment History</h2>
+                    <h2 className="text-lg font-semibold">
+                        Payment History
+                    </h2>
                 </div>
+
                 <DataTable
                     data={data.payments}
                     columns={paymentColumns}
@@ -250,8 +327,11 @@ export default function BillingDetails() {
             {/* Adjustments */}
             <div className="bg-white border rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">Billing Adjustments</h2>
+                    <h2 className="text-lg font-semibold">
+                        Billing Adjustments
+                    </h2>
                 </div>
+
                 <DataTable
                     data={data.adjustments}
                     columns={adjustmentColumns}
@@ -261,7 +341,11 @@ export default function BillingDetails() {
                 />
             </div>
 
-            <CommonDrawer open={showPaymentDrawer} onClose={() => setShowPaymentDrawer(false)}>
+            {/* Payment Drawer */}
+            <CommonDrawer
+                open={showPaymentDrawer}
+                onClose={() => setShowPaymentDrawer(false)}
+            >
                 <CreatePayment
                     customerId={customerId}
                     billingMonth={billingMonth}
@@ -273,7 +357,12 @@ export default function BillingDetails() {
                     }}
                 />
             </CommonDrawer>
-            <CommonDrawer open={showAdjustmentDrawer} onClose={() => setShowAdjustmentDrawer(false)}>
+
+            {/* Adjustment Drawer */}
+            <CommonDrawer
+                open={showAdjustmentDrawer}
+                onClose={() => setShowAdjustmentDrawer(false)}
+            >
                 <CreateAdjustment
                     customerId={customerId}
                     billingMonth={billingMonth}
