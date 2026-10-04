@@ -1,14 +1,14 @@
 
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import DataTable from "../../components/common/DataTable";
 import FormGrid from "../../components/form/FormGrid";
+
 import { useBilling } from "../../queries/useBilling";
+
 import DateField from "../../components/form/form-input/DateField";
-import AsyncTypeahead from "../../components/form/form-input/AsyncTypeahead";
-import { loadCustomerOptions } from "../../utils/customerLoader";
 import SelectField from "../../components/form/form-input/SelectField";
 import SearchButton from "../../components/common/SearchButton";
 
@@ -18,47 +18,112 @@ export default function BillingList() {
 
     const navigationState = location.state || {};
 
+    // ---------------------------------------------------------
+    // Customer Type
+    // ---------------------------------------------------------
     const customerTypeOptions = [
+        { id: "", name: "All" },
+        { id: "NORMAL", name: "Dhariya" },
+        { id: "LUXURY", name: "Maa Radhe" },
+        { id: "DEALER", name: "Dealer" },
+    ];
+
+    // ---------------------------------------------------------
+    // Payment Type
+    // ---------------------------------------------------------
+    const paymentTypeOptions = [
         { id: "", name: "All" },
         { id: "SUBSCRIPTION", name: "Subscription" },
         { id: "NON_SUBSCRIPTION", name: "Non-Subscription" },
     ];
 
+    // ---------------------------------------------------------
+    // Payment Status
+    // ---------------------------------------------------------
     const paymentStatusOptions = [
         { id: "", name: "All" },
         { id: "PENDING", name: "Pending" },
         { id: "PAID", name: "Paid" },
     ];
 
+    // ---------------------------------------------------------
+    // Previous Month
+    // ---------------------------------------------------------
+    const previousMonth = new Date();
+
+    // First day of current month
+    previousMonth.setDate(1);
+
+    // Move to previous month
+    previousMonth.setMonth(previousMonth.getMonth() - 1);
+
+    // ---------------------------------------------------------
+    // Default Values
+    // ---------------------------------------------------------
     const defaultValues = {
-        BillingMonth: navigationState.BillingMonth ?? new Date().toISOString().split("T")[0],
-        CustomerId: null,
-        customerType: navigationState.customerType ?? "",
-        paymentStatus: navigationState.paymentStatus ?? "",
+        BillingMonth:
+            navigationState.BillingMonth ??
+            previousMonth.toISOString().split("T")[0],
+
+        customerType:
+            navigationState.customerType ?? "",
+
+        paymentType:
+            navigationState.paymentType ?? "",
+
+        paymentStatus:
+            navigationState.paymentStatus ?? "",
     };
 
     const [searchFilters, setSearchFilters] = useState(defaultValues);
 
-    const { control, handleSubmit } = useForm({ defaultValues: defaultValues });
-    const { data, isLoading, refetch } = useBilling(searchFilters);
+    const { control, handleSubmit } = useForm({
+        defaultValues,
+    });
+
+    const {
+        data,
+        isLoading,
+        refetch,
+    } = useBilling(searchFilters);
+
     const billingList = data?.items ?? [];
+
     const summary =
         data?.summary ?? {
             customerCount: 0,
             totalBill: 0,
             totalPaid: 0,
+            totalCollected: 0,
             totalOutstanding: 0,
         };
 
-    const onSubmit = (values) => setSearchFilters(values);
+    // ---------------------------------------------------------
+    // Search
+    // ---------------------------------------------------------
+    const onSubmit = (values) => {
+        setSearchFilters(values);
+    };
 
-    const pinnedColumns = useMemo(() => ({ left: ["customerName"] }), []);
+    // ---------------------------------------------------------
+    // Pinned Columns
+    // ---------------------------------------------------------
+    const pinnedColumns = useMemo(
+        () => ({
+            left: ["customerName"],
+        }),
+        []
+    );
 
+    // ---------------------------------------------------------
+    // Table Columns
+    // ---------------------------------------------------------
     const columns = useMemo(
         () => [
             {
                 accessorKey: "customerName",
                 header: "Customer",
+
                 cell: ({ row }) => (
                     <span className="font-semibold text-gray-800">
                         {row.original.customerName}
@@ -74,24 +139,33 @@ export default function BillingList() {
             {
                 accessorKey: "productAmount",
                 header: "Products",
+
                 cell: ({ row }) => (
-                    <span>₹{row.original.productAmount.toFixed(2)}</span>
+                    <span>
+                        ₹{row.original.productAmount.toFixed(2)}
+                    </span>
                 ),
             },
 
             {
                 accessorKey: "deliveryCharge",
                 header: "Delivery",
+
                 cell: ({ row }) => (
-                    <span>₹{row.original.deliveryCharge.toFixed(2)}</span>
+                    <span>
+                        ₹{row.original.deliveryCharge.toFixed(2)}
+                    </span>
                 ),
             },
 
             {
                 accessorKey: "adjustmentAmount",
                 header: "Adjustment",
+
                 cell: ({ row }) => {
-                    const amount = Number(row.original.adjustmentAmount || 0);
+                    const amount = Number(
+                        row.original.adjustmentAmount || 0
+                    );
 
                     if (amount === 0) {
                         return <span>—</span>;
@@ -116,11 +190,14 @@ export default function BillingList() {
 
             {
                 id: "totalBill",
+
                 accessorFn: (row) =>
                     row.productAmount +
                     row.deliveryCharge +
                     row.adjustmentAmount,
+
                 header: "Total Bill",
+
                 cell: ({ row }) => {
                     const total =
                         row.original.productAmount +
@@ -138,6 +215,7 @@ export default function BillingList() {
             {
                 accessorKey: "paidAmount",
                 header: "Paid",
+
                 cell: ({ row }) => (
                     <span className="text-green-600 font-medium">
                         ₹{row.original.paidAmount.toFixed(2)}
@@ -147,17 +225,23 @@ export default function BillingList() {
 
             {
                 id: "balanceAmount",
-                accessorFn: (row) => row.currentMonthBalance,
+
+                accessorFn: (row) =>
+                    row.currentMonthBalance,
+
                 header: "Balance",
+
                 cell: ({ row }) => (
                     <span className="text-red-600 font-medium">
-                        ₹{row.original.currentMonthBalance.toFixed(2)}
+                        ₹
+                        {row.original.currentMonthBalance.toFixed(2)}
                     </span>
                 ),
             },
 
             {
                 id: "status",
+
                 accessorFn: (row) => {
                     const paid = row.paidAmount;
                     const balance = row.currentMonthBalance;
@@ -172,10 +256,13 @@ export default function BillingList() {
 
                     return "PENDING";
                 },
+
                 header: "Status",
+
                 cell: ({ row }) => {
                     const paid = row.original.paidAmount;
-                    const balance = row.original.currentMonthBalance;
+                    const balance =
+                        row.original.currentMonthBalance;
 
                     let status = "PENDING";
                     let css = "bg-red-100 text-red-700";
@@ -200,18 +287,32 @@ export default function BillingList() {
 
             {
                 id: "actions",
+
                 header: "Actions",
+
                 enableSorting: false,
+
                 cell: ({ row }) => (
                     <button
                         onClick={() => {
-                            const { customerId, billingMonth } = row.original;
+                            const {
+                                customerId,
+                                billingMonth,
+                            } = row.original;
 
                             const url =
-                                `/billing/details?customerId=${encodeURIComponent(customerId)}` +
-                                `&billingMonth=${encodeURIComponent(billingMonth)}`;
+                                `/billing/details?customerId=${encodeURIComponent(
+                                    customerId
+                                )}` +
+                                `&billingMonth=${encodeURIComponent(
+                                    billingMonth
+                                )}`;
 
-                            window.open(url, "_blank", "noopener,noreferrer");
+                            window.open(
+                                url,
+                                "_blank",
+                                "noopener,noreferrer"
+                            );
                         }}
                         className="text-blue-600 hover:underline font-medium"
                     >
@@ -223,26 +324,39 @@ export default function BillingList() {
         [navigate]
     );
 
+    // ---------------------------------------------------------
+    // UI
+    // ---------------------------------------------------------
     return (
         <div className="space-y-6">
+
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Billing</h1>
-                    <p className="text-sm text-gray-500 mt-1">Manage monthly billing and collections</p>
+                    <h1 className="text-2xl font-semibold text-gray-800">
+                        Billing
+                    </h1>
+
+                    <p className="text-sm text-gray-500 mt-1">
+                        Manage monthly billing and collections
+                    </p>
                 </div>
-                {/* <button onClick={() => refetch()} className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
-                    Refresh
-                </button> */}
             </div>
 
             {/* Filters */}
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <FormGrid cols={5} gap={4}>
-                        <DateField control={control} name="BillingMonth" label="Billing Month" mode="month" />
-                        <AsyncTypeahead name="CustomerId" control={control} label="Customer" required loadOptions={loadCustomerOptions} />
 
+                        {/* Billing Month */}
+                        <DateField
+                            control={control}
+                            name="BillingMonth"
+                            label="Billing Month"
+                            mode="month"
+                        />
+
+                        {/* Customer Type */}
                         <SelectField
                             name="customerType"
                             label="Customer Type"
@@ -250,38 +364,81 @@ export default function BillingList() {
                             options={customerTypeOptions}
                         />
 
+                        {/* Payment Type */}
+                        <SelectField
+                            name="paymentType"
+                            label="Payment Type"
+                            control={control}
+                            options={paymentTypeOptions}
+                        />
+
+                        {/* Payment Status */}
                         <SelectField
                             name="paymentStatus"
                             label="Payment Status"
                             control={control}
                             options={paymentStatusOptions}
                         />
-                        <div className="flex items-end">
-                            <SearchButton onClick={handleSubmit(onSubmit)} />
 
+                        {/* Search */}
+                        <div className="flex items-end">
+                            <SearchButton
+                                onClick={handleSubmit(onSubmit)}
+                            />
                         </div>
+
                     </FormGrid>
                 </form>
             </div>
 
             {/* Summary */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                {/* Customers */}
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Customers</p>
-                    <h2 className="text-3xl font-bold mt-2">{summary.customerCount}</h2>
+                    <p className="text-sm text-gray-500">
+                        Customers
+                    </p>
+
+                    <h2 className="text-3xl font-bold mt-2">
+                        {summary.customerCount}
+                    </h2>
                 </div>
+
+                {/* Total Bill */}
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Total Bill</p>
-                    <h2 className="text-3xl font-bold mt-2">₹{summary.totalBill.toFixed(2)}</h2>
+                    <p className="text-sm text-gray-500">
+                        Total Bill
+                    </p>
+
+                    <h2 className="text-3xl font-bold mt-2">
+                        ₹{summary.totalBill.toFixed(2)}
+                    </h2>
                 </div>
+
+                {/* Collected */}
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Collected</p>
-                    <h2 className="text-3xl font-bold mt-2 text-green-600">₹{summary?.totalCollected?.toFixed(2)}</h2>
+                    <p className="text-sm text-gray-500">
+                        Collected
+                    </p>
+
+                    <h2 className="text-3xl font-bold mt-2 text-green-600">
+                        ₹
+                        {summary?.totalCollected?.toFixed(2)}
+                    </h2>
                 </div>
+
+                {/* Outstanding */}
                 <div className="bg-white border rounded-2xl p-5">
-                    <p className="text-sm text-gray-500">Outstanding</p>
-                    <h2 className="text-3xl font-bold mt-2 text-red-600">₹{summary.totalOutstanding.toFixed(2)}</h2>
+                    <p className="text-sm text-gray-500">
+                        Outstanding
+                    </p>
+
+                    <h2 className="text-3xl font-bold mt-2 text-red-600">
+                        ₹{summary.totalOutstanding.toFixed(2)}
+                    </h2>
                 </div>
+
             </div>
 
             {/* Table */}
@@ -295,6 +452,7 @@ export default function BillingList() {
                     emptyMessage="No billing records found."
                 />
             </div>
+
         </div>
     );
 }
