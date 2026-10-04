@@ -176,7 +176,7 @@ export default function SummaryBill() {
 
                     <span className="font-semibold">
                         {" "}
-                        {AppConfig.companyName}
+                        {data.farm.farmName}{" "}
                     </span>
 
                     ❤️

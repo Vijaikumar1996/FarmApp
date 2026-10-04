@@ -1,9 +1,20 @@
 import qrscanner from "/images/qrscanner.png";
+import luxuryqrscanner from "/images/luxuryqrscanner.png";
+
 export default function BankDetails({ farm }) {
+
+    // Select QR code based on customer type
+    const qrCode =
+        farm?.customerType?.toUpperCase() === "LUXURY"
+            ? luxuryqrscanner
+            : qrscanner;
+
     return (
         <div className="border overflow-hidden uppercase">
 
-            {/* Header */}
+            {/* =========================================
+                HEADER
+            ========================================= */}
 
             <div className="px-3 py-2 border-b">
                 <h3 className="text-base font-semibold text-black">
@@ -12,7 +23,9 @@ export default function BankDetails({ farm }) {
             </div>
 
 
-            {/* Bank Details */}
+            {/* =========================================
+                BANK DETAILS
+            ========================================= */}
 
             <div className="px-3 py-2">
 
@@ -20,54 +33,73 @@ export default function BankDetails({ farm }) {
 
                     <tbody>
 
+                        {/* Account Name */}
                         <tr className="border-b">
+
                             <td className="py-1.5 font-semibold w-28">
                                 Account
                             </td>
 
                             <td className="py-1.5 font-medium">
-                                {farm.accountName}
+                                {farm?.accountName}
                             </td>
+
                         </tr>
 
+
+                        {/* Account Number */}
                         <tr className="border-b">
+
                             <td className="py-1.5 font-semibold">
                                 A/C No
                             </td>
 
                             <td className="py-1.5 font-medium">
-                                {farm.accountNumber}
+                                {farm?.accountNumber}
                             </td>
+
                         </tr>
 
+
+                        {/* Bank */}
                         <tr className="border-b">
+
                             <td className="py-1.5 font-semibold">
                                 Bank
                             </td>
 
                             <td className="py-1.5 font-medium">
-                                {farm.bankName}
+                                {farm?.bankName}
                             </td>
+
                         </tr>
 
+
+                        {/* IFSC */}
                         <tr className="border-b">
+
                             <td className="py-1.5 font-semibold">
                                 IFSC
                             </td>
 
                             <td className="py-1.5 font-medium">
-                                {farm.ifscCode}
+                                {farm?.ifscCode}
                             </td>
+
                         </tr>
 
+
+                        {/* UPI */}
                         <tr>
+
                             <td className="py-1.5 font-semibold">
                                 UPI
                             </td>
 
                             <td className="py-1.5 font-bold text-green-600">
-                                {farm.upiId}
+                                {farm?.upiId}
                             </td>
+
                         </tr>
 
                     </tbody>
@@ -75,16 +107,18 @@ export default function BankDetails({ farm }) {
                 </table>
 
 
-                {/* QR Code */}
+                {/* =========================================
+                    QR CODE
+                ========================================= */}
 
                 <div className="mt-3 flex justify-center">
 
-                    {qrscanner ? (
+                    {qrCode ? (
 
                         <img
-                            src={qrscanner}
+                            src={qrCode}
                             alt="QR Code"
-                            className="w-60 h-60 object-contain"
+                            className="w-100 h-100 object-contain"
                         />
 
                     ) : (
@@ -98,7 +132,9 @@ export default function BankDetails({ farm }) {
                 </div>
 
 
-                {/* Footer */}
+                {/* =========================================
+                    FOOTER
+                ========================================= */}
 
                 <div className="mt-3 text-center">
 
