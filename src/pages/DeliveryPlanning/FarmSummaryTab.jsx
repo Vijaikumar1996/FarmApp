@@ -116,7 +116,7 @@ export default function FarmSummaryTab() {
 
     text += "\n----------------------------\n";
 
-    text += `Total Quantity : ${totalQuantity}\n`;
+    // text += `Total Quantity : ${totalQuantity}\n`;
 
     text += `Total Litres  : ${totalLitres}`;
 

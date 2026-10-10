@@ -56,6 +56,10 @@ export default function DriverLoadingTab() {
     text += "🚛 Driver Loading\n\n";
     text += `Delivery Date : ${searchDate}\n\n`;
 
+    // ============================================================
+    // AREA-WISE DRIVER LOADING
+    // ============================================================
+
     data.forEach((area, index) => {
 
       text += `${index + 1}. ${area.areaName}\n`;
@@ -87,7 +91,7 @@ export default function DriverLoadingTab() {
 
       });
 
-      // Products
+      // Display products
       categories.forEach((category, categoryIndex) => {
 
         category.products.forEach(product => {
@@ -107,11 +111,125 @@ export default function DriverLoadingTab() {
 
     });
 
-    await navigator.clipboard.writeText(text);
 
-    toast.success("Driver loading copied.");
+    // ============================================================
+    // OTHER PRODUCTS BY PHASE / LOCATION
+    // MILK PRODUCTS ARE EXCLUDED
+    // ============================================================
+
+    const sections = [
+      {
+        title: "PHASE 1",
+        areaIds: [2, 3]
+      },
+      {
+        title: "PHASE 2",
+        areaIds: [1, 4]
+      },
+      {
+        title: "ROC",
+        excludeAreaIds: [1, 2, 3, 4, 9, 12]
+      },
+      {
+        title: "PUDUPAKKAM",
+        areaIds: [9]
+      }
+    ];
+
+    sections.forEach(section => {
+
+      text += `${section.title}\n`;
+      text += "------------------------------\n";
+
+      // Get areas matching the section
+      const matchingAreas = data.filter(area => {
+
+        const areaId = Number(area.areaId);
+
+        if (section.areaIds) {
+          return section.areaIds.includes(areaId);
+        }
+
+        return !section.excludeAreaIds.includes(areaId);
+
+      });
+
+      // Aggregate non-milk products
+      const otherProducts = [];
+
+      matchingAreas.forEach(area => {
+
+        area.products.forEach(product => {
+
+          // Exclude all products in the Milk category
+          if (
+            String(product.categoryName ?? "")
+              .trim()
+              .toLowerCase() === "milk"
+          ) {
+            return;
+          }
+
+          const existingProduct = otherProducts.find(
+            x => x.productCode === product.productCode
+          );
+
+          if (existingProduct) {
+
+            existingProduct.quantity += Number(product.quantity);
+
+          } else {
+
+            otherProducts.push({
+              productCode: product.productCode,
+              quantity: Number(product.quantity)
+            });
+
+          }
+
+        });
+
+      });
+
+      // Display other products
+      if (otherProducts.length === 0) {
+
+        text += "No other products\n";
+
+      } else {
+
+        otherProducts.forEach(product => {
+
+          text += `${product.productCode.padEnd(12)} ${product.quantity}\n`;
+
+        });
+
+      }
+
+      text += "\n";
+
+    });
+
+
+    // ============================================================
+    // COPY TO CLIPBOARD
+    // ============================================================
+
+    try {
+
+      await navigator.clipboard.writeText(text);
+
+      toast.success("Driver loading copied.");
+
+    } catch (error) {
+
+      console.error("Failed to copy driver loading:", error);
+
+      toast.error("Failed to copy driver loading.");
+
+    }
+
   };
-
   // ---------------------------------------------------------
   // UI
   // ---------------------------------------------------------

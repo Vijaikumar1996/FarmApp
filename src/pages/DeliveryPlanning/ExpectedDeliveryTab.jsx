@@ -224,15 +224,12 @@ export default function ExpectedDeliveriesTab() {
 
 
             {
-                accessorKey: "productCode",
-                header: "Code",
-
+                accessorKey: "address",
+                header: "Address",
                 cell: ({ row }) => (
-
-                    <span className="font-semibold text-gray-700">
-                        {row.original.productCode}
-                    </span>
-
+                    <div className="w-[250px] whitespace-normal break-words font-semibold text-gray-700">
+                        {row.original.address}
+                    </div>
                 ),
             },
 
@@ -328,7 +325,7 @@ export default function ExpectedDeliveriesTab() {
             //             >
             //                 Hold
             //             </button>
-                       
+
             //         );
             //     },
             // },

@@ -619,7 +619,12 @@ export default function DeliveryBoySheetPreview({
              */
 
             const fullHeight =
-                container.scrollHeight;
+                Math.ceil(
+                    Math.max(
+                        container.scrollHeight,
+                        container.getBoundingClientRect().height
+                    )
+                ) + 40;
 
 
             container.style.height =
@@ -636,6 +641,7 @@ export default function DeliveryBoySheetPreview({
 
             container.style.minHeight =
                 "0";
+            container.style.paddingBottom = "24px";
 
 
             /*
@@ -1169,14 +1175,14 @@ export default function DeliveryBoySheetPreview({
 
         <div className="fixed inset-0 z-1000 bg-black/50 flex items-center justify-center">
 
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[1500px] h-[99vh] flex flex-col">
+            <div className="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full max-w-[1500px] h-[100dvh] max-h-[100dvh] sm:h-[99vh] sm:max-h-[99vh] flex flex-col">
 
 
                 {/* ================================================= */}
                 {/* Header */}
                 {/* ================================================= */}
 
-                <div className="flex items-center justify-between px-5 py-3 border-b">
+                <div className="flex items-center justify-between px-5 py-1 border-b">
 
                     <div>
 
@@ -1209,7 +1215,7 @@ export default function DeliveryBoySheetPreview({
                 {/* Area Tabs */}
                 {/* ================================================= */}
 
-                <div className="px-5 pt-3 border-b">
+                <div className="px-5 pt-1 border-b">
 
                     <div className="flex items-center gap-2 overflow-x-auto">
 
@@ -1350,7 +1356,7 @@ export default function DeliveryBoySheetPreview({
                             {/* Title */}
                             {/* ===================================== */}
                             <div ref={sheetRef}>
-                                <div className="text-center  mb-2">
+                                <div className="text-center mb-5">
                                     <div className="flex justify-center gap-10 mt-2 text-xl font-semibold">
 
                                         <span>
@@ -1388,28 +1394,28 @@ export default function DeliveryBoySheetPreview({
                                         </th> */}
 
 
-                                            <th className="border px-2 py-2">
+                                            <th className="border border-black   px-2 py-2 w-100">
                                                 Customer
                                             </th>
 
 
-                                            <th className="border px-2 py-2">
+                                            <th className="border border-black   px-2 py-2 w-150">
                                                 Address
                                             </th>
 
 
-                                            <th className="border w-1/14 px-2 py-2">
+                                            <th className="border border-black   w-1/14 px-2 py-2">
                                                 Milk
                                             </th>
 
 
-                                            <th className="border px-2 py-2">
+                                            <th className="border border-black w-1/6  px-2 py-2">
                                                 Other Products
                                             </th>
 
 
                                             <th
-                                                className="border px-2 py-2"
+                                                className="border border-black   px-2 py-2"
                                                 data-html2canvas-ignore="true"
                                             >
                                                 Action
@@ -1476,7 +1482,7 @@ export default function DeliveryBoySheetPreview({
 
                                                                 {/* Customer */}
 
-                                                                <td className="border px-2 py-2 align-top">
+                                                                <td className="border border-black   px-2 py-2 align-top">
 
                                                                     <div className="font-medium">
 
@@ -1502,7 +1508,7 @@ export default function DeliveryBoySheetPreview({
 
                                                                 {/* Address */}
 
-                                                                <td className="border text-2xl px-2 py-2 align-top whitespace-pre-wrap">
+                                                                <td className="border border-black   text-2xl px-2 py-2 align-top whitespace-pre-wrap">
 
                                                                     {
                                                                         row.address ||
@@ -1514,7 +1520,7 @@ export default function DeliveryBoySheetPreview({
 
                                                                 {/* Milk */}
 
-                                                                <td className="border font-bold px-2 py-2 text-2xl text-center align-top whitespace-pre-wrap">
+                                                                <td className="border border-black   font-bold px-2 py-2 text-2xl text-center align-top whitespace-pre-wrap">
 
                                                                     {
                                                                         row.milk ||
@@ -1526,7 +1532,7 @@ export default function DeliveryBoySheetPreview({
 
                                                                 {/* Other Products */}
 
-                                                                <td className="border px-2 py-2 text-2xl align-top whitespace-pre-wrap">
+                                                                <td className="border border-black   px-2 py-2 text-2xl align-top whitespace-pre-wrap">
 
                                                                     {row.otherProducts && (
 
@@ -1697,7 +1703,7 @@ export default function DeliveryBoySheetPreview({
                                                             <tr>
                                                                 <td
                                                                     colSpan={5}
-                                                                    className="border-0 h-4"
+                                                                    className="border-0 h-2"
                                                                 >
                                                                     &nbsp;
                                                                 </td>
